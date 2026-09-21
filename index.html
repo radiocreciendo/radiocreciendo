@@ -89,7 +89,10 @@ body{
 .play:active{transform:translateY(1px);box-shadow:0 5px 16px rgba(4,143,63,.4)}
 .play[data-estado="cargando"]{background:#6B5E6D;box-shadow:none;cursor:progress}
 .play[data-estado="aire"]{background:#fff;color:var(--noche);box-shadow:0 10px 28px rgba(0,0,0,.3)}
-.play[data-estado="error"]{background:#8E2230;box-shadow:none}
+.play[data-estado="error"],.play[data-estado="fuera"]{background:#8E2230;box-shadow:none}
+.play[data-estado="buscando"]{background:#6B5E6D;box-shadow:none}
+.play[data-estado="buscando"] .play__ico{animation:buscar 1.6s ease-in-out infinite}
+@keyframes buscar{0%,100%{opacity:1}50%{opacity:.45}}
 .play__ico{
   width:38px;height:38px;flex:none;border-radius:50%;
   background:rgba(255,255,255,.2);
@@ -215,7 +218,7 @@ body{
   display:grid;place-items:center;cursor:pointer;
 }
 .barra__btn[data-estado="aire"]{background:#fff;color:var(--noche)}
-.barra__btn[data-estado="cargando"]{background:#4A3F52}
+.barra__btn[data-estado="cargando"],.barra__btn[data-estado="buscando"]{background:#4A3F52}
 .barra__btn svg{width:16px;height:16px;fill:currentColor}
 .barra__txt{min-width:0;flex:1}
 .barra__t1{font-size:.95rem;font-weight:800;line-height:1.2}
@@ -809,29 +812,65 @@ function conCorte(u){
   return u;
 }
 
-// mientras conecta no reportamos error: lo decide probarDesde
-audio.addEventListener("error", e => e.stopImmediatePropagation(), true);
+/* ---------- Estado del vivo ----------
+   enVivo: el oyente quiere escuchar la radio (tocó play y no pausó).
+   fase:   "quieto" | "conectando" | "sonando" | "buscando"
+
+   Si la señal se corta, o si la emisora está fuera del aire cuando alguien
+   toca play, el reproductor sigue buscando solo, con esperas crecientes,
+   durante unos cuatro minutos. Si la emisora vuelve en ese lapso, el audio
+   arranca sin que nadie toque nada. Pasado ese tiempo se rinde y avisa. */
+let enVivo = false;
+let fase = "quieto";
+let reintentos = 0;
+let relojBusqueda = null;
+let vigia = null;
+const PAUSAS = [3, 5, 10, 15, 20, 30, 30, 30, 30, 30, 30, 30];   // segundos
+const NOTA_BASE = "Transmitimos las 24 horas desde el Alto Valle.";
+
+function cancelarBusqueda(){
+  clearTimeout(relojBusqueda); relojBusqueda = null;
+  clearTimeout(vigia); vigia = null;
+}
 
 function pintar(estado){
   play.dataset.estado = estado;
   barraBtn.dataset.estado = estado;
+  const t1 = document.querySelector(".barra__t1");
+  if(t1) t1.textContent = "Radio Creciendo 102.1";
+
   if(estado === "aire"){
     playIco.innerHTML = '<span class="onda">'+SVG_ONDA+'</span>';
     playTxt.textContent = "En el aire";
     barraIco.innerHTML = SVG_PAUSA;
     barraBtn.setAttribute("aria-label","Pausar la transmisión");
     barraEstado.textContent = "Sonando ahora";
-    const t1a = document.querySelector(".barra__t1");
-    if(t1a) t1a.textContent = "Radio Creciendo 102.1";
+    aireNota.textContent = NOTA_BASE;
   } else if(estado === "cargando"){
     playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
     playTxt.textContent = "Conectando…";
+    barraIco.innerHTML = SVG_PAUSA;
+    barraBtn.setAttribute("aria-label","Cancelar");
     barraEstado.textContent = "Conectando con la emisora…";
+  } else if(estado === "buscando"){
+    playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
+    playTxt.textContent = "Buscando señal…";
+    barraIco.innerHTML = SVG_PAUSA;
+    barraBtn.setAttribute("aria-label","Dejar de buscar");
+    barraEstado.textContent = "Sin señal. Seguimos intentando…";
+    aireNota.textContent = "La emisora no responde en este momento. Seguimos intentando solos: apenas vuelva, empieza a sonar.";
+  } else if(estado === "fuera"){
+    playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
+    playTxt.textContent = "Reintentar";
+    barraIco.innerHTML = SVG_PLAY;
+    barraBtn.setAttribute("aria-label","Reintentar");
+    barraEstado.textContent = "Emisora fuera del aire. Tocá para reintentar.";
+    aireNota.textContent = "La emisora está fuera del aire en este momento. Probá de nuevo en unos minutos.";
   } else if(estado === "error"){
     playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
     playTxt.textContent = "Reintentar";
     barraIco.innerHTML = SVG_PLAY;
-    barraEstado.textContent = "Se cortó la señal. Tocá para reconectar.";
+    barraEstado.textContent = "No hay una dirección de stream cargada.";
     aireNota.textContent = "No pudimos conectar con la emisora. Probá de nuevo en un momento.";
   } else {
     playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
@@ -839,25 +878,24 @@ function pintar(estado){
     barraIco.innerHTML = SVG_PLAY;
     barraBtn.setAttribute("aria-label","Escuchar en vivo");
     barraEstado.textContent = "En vivo desde Cipolletti";
-    const t1p = document.querySelector(".barra__t1");
-    if(t1p) t1p.textContent = "Radio Creciendo 102.1";
+    aireNota.textContent = NOTA_BASE;
   }
 }
 
-/* Prueba las direcciones una por una. La que arranque queda guardada en
-   urlBuena y las siguientes veces va derecho a esa.
+/* Prueba las direcciones una por una. La que arranca queda en urlBuena y
+   en los reintentos se prueba primero.
 
    Cada intento lleva un número: si el oyente vuelve a tocar el botón, el
-   intento anterior queda huérfano y se descarta solo, para que no termine
-   pisando el estado del nuevo. Y si una variante no arranca en 8 segundos
-   se la da por muerta y se pasa a la siguiente, así el botón nunca queda
-   colgado en "Conectando". */
+   intento anterior queda huérfano y se descarta solo, para que no pise el
+   estado del nuevo. Ninguna dirección puede dejar el botón colgado: las
+   intermedias tienen 12 segundos y la última 25. */
 let intentoId = 0;
-const ESPERA = 15000;
+const ESPERA = 12000;
+const ESPERA_ULTIMA = 25000;
 
 function probarDesde(lista, i, mio){
   if(mio !== intentoId) return;
-  if(i >= lista.length){ urlBuena = null; pintar("error"); return; }
+  if(i >= lista.length){ sinSenal(); return; }
 
   const u = lista[i];
   let resuelto = false;
@@ -867,10 +905,8 @@ function probarDesde(lista, i, mio){
     probarDesde(lista, i + 1, mio);
   };
 
-  // la ultima direccion de la lista no tiene reloj: no hay a donde saltar,
-  // asi que se espera lo que haga falta y decide el propio navegador
   const esUltima = i === lista.length - 1;
-  const reloj = esUltima ? null : setTimeout(seguir, ESPERA);
+  const reloj = setTimeout(seguir, esUltima ? ESPERA_ULTIMA : ESPERA);
   audio.src = conCorte(u);
   audio.load();
   audio.play()
@@ -883,28 +919,96 @@ function probarDesde(lista, i, mio){
     .catch(() => { clearTimeout(reloj); seguir(); });
 }
 
+function listaDeIntento(){
+  if(!urlBuena) return STREAM_URLS.slice();
+  return [urlBuena].concat(STREAM_URLS.filter(u => u !== urlBuena));
+}
+
+function conectar(){
+  fase = "conectando";
+  probarDesde(listaDeIntento(), 0, ++intentoId);
+}
+
+/* Ninguna dirección respondió: se programa otra vuelta, o se abandona
+   si ya pasaron todos los reintentos. */
+function sinSenal(){
+  if(!enVivo) return;
+  if(reintentos >= PAUSAS.length){
+    enVivo = false; fase = "quieto"; reintentos = 0;
+    cancelarBusqueda();
+    audio.removeAttribute("src"); audio.load();
+    pintar("fuera");
+    return;
+  }
+  const seg = PAUSAS[reintentos++];
+  fase = "buscando";
+  pintar("buscando");
+  clearTimeout(relojBusqueda);
+  relojBusqueda = setTimeout(() => { if(enVivo) conectar(); }, seg * 1000);
+}
+
+/* La señal se cayó mientras sonaba. */
+function seCorto(){
+  if(!enVivo || fase !== "sonando") return;
+  cancelarBusqueda();
+  fase = "buscando";
+  intentoId++;
+  audio.removeAttribute("src"); audio.load();
+  reintentos = 0;
+  sinSenal();
+}
+
+/* Si el audio se queda sin datos más de 12 segundos, se da por cortado. */
+function vigilar(){
+  if(fase !== "sonando" || !enVivo) return;
+  barraEstado.textContent = "Recuperando la señal…";
+  clearTimeout(vigia);
+  vigia = setTimeout(() => {
+    if(fase === "sonando" && audio.readyState < 3) seCorto();
+  }, 12000);
+}
+
 function alternar(){
   if(!hayStream){ pintar("error"); return; }
   pararEpisodio();
-  if(audio.paused){
+  if(!enVivo){
+    enVivo = true; reintentos = 0; cancelarBusqueda();
     pintar("cargando");
-    // se vuelve a fijar la fuente en cada play: así el vivo nunca queda atrasado
-    probarDesde(urlBuena ? [urlBuena] : STREAM_URLS.slice(), 0, ++intentoId);
+    conectar();
   } else {
+    // tocar el botón mientras suena, conecta o busca: se detiene todo
+    enVivo = false; fase = "quieto"; reintentos = 0; cancelarBusqueda();
     intentoId++;
-    audio.pause();
-    audio.removeAttribute("src");
-    audio.load();
+    audio.pause(); audio.removeAttribute("src"); audio.load();
     pintar("pausa");
   }
 }
 
 play.addEventListener("click", alternar);
 barraBtn.addEventListener("click", () => { if(sonando === "epi") alternarEpisodio(epiActual); else alternar(); });
-audio.addEventListener("playing", () => { sonando = "vivo"; pintar("aire"); });
-audio.addEventListener("pause",   () => { if(play.dataset.estado !== "error") pintar("pausa"); });
-audio.addEventListener("error",   () => { if(audio.getAttribute("src")) pintar("error"); });
-audio.addEventListener("stalled", () => pintar("cargando"));
+
+audio.addEventListener("playing", () => {
+  cancelarBusqueda();
+  if(!enVivo){ audio.pause(); return; }   // llegó tarde: el oyente ya había cortado
+  fase = "sonando"; reintentos = 0; sonando = "vivo";
+  pintar("aire");
+});
+
+audio.addEventListener("pause", () => {
+  if(!enVivo){ pintar("pausa"); return; }
+  // una pausa que no pidió el oyente ni el reproductor (por ejemplo, entra
+  // una llamada): se respeta como pausa. El fin del stream no cuenta, eso
+  // lo maneja "ended" como corte.
+  if(fase === "sonando" && !audio.ended){
+    enVivo = false; fase = "quieto"; cancelarBusqueda();
+    pintar("pausa");
+  }
+});
+
+audio.addEventListener("error",   () => { if(fase === "sonando") seCorto(); });
+audio.addEventListener("ended",   () => { if(fase === "sonando") seCorto(); });
+audio.addEventListener("waiting", vigilar);
+audio.addEventListener("stalled", vigilar);
 vol.addEventListener("input", e => { audio.volume = +e.target.value; });
 
 /* Controles en la pantalla bloqueada de Android / iOS */
@@ -1097,6 +1201,7 @@ function alternarEpisodio(i){
 
   // cambiar de episodio: cortar el anterior y el vivo
   if(epiActual !== i){
+    enVivo = false; fase = "quieto"; reintentos = 0; cancelarBusqueda();
     intentoId++;
     audio.pause();
     audio.removeAttribute("src");
