@@ -797,10 +797,11 @@ const hayStream = STREAM_URLS.length > 0;
 let urlBuena = null;   // la primera que funcione queda fijada para la sesión
 
 function conCorte(u){
-  // los Shoutcast viejos se atragantan con parámetros: sólo cachébuster
-  // en las rutas limpias
-  if(u.includes(";")) return u;
-  return u + (u.includes("?") ? "&" : "?") + "t=" + Date.now();
+  // La URL va tal cual, sin parametros agregados: el proxy de SonicPanel
+  // rechaza cualquier cola extra y el audio no arranca. Para que el vivo
+  // no quede atrasado alcanza con soltar la fuente al pausar, que es lo
+  // que ya hace alternar().
+  return u;
 }
 
 // mientras conecta no reportamos error: lo decide probarDesde
@@ -847,7 +848,7 @@ function pintar(estado){
    se la da por muerta y se pasa a la siguiente, así el botón nunca queda
    colgado en "Conectando". */
 let intentoId = 0;
-const ESPERA = 8000;
+const ESPERA = 15000;
 
 function probarDesde(lista, i, mio){
   if(mio !== intentoId) return;
@@ -861,7 +862,10 @@ function probarDesde(lista, i, mio){
     probarDesde(lista, i + 1, mio);
   };
 
-  const reloj = setTimeout(seguir, ESPERA);
+  // la ultima direccion de la lista no tiene reloj: no hay a donde saltar,
+  // asi que se espera lo que haga falta y decide el propio navegador
+  const esUltima = i === lista.length - 1;
+  const reloj = esUltima ? null : setTimeout(seguir, ESPERA);
   audio.src = conCorte(u);
   audio.load();
   audio.play()

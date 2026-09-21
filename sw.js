@@ -2,7 +2,7 @@
    Cachea la cáscara del sitio para que abra al instante y funcione sin señal.
    El stream de audio y el feed de noticias NUNCA se cachean: siempre van a la red. */
 
-const VERSION = "creciendo-v6";
+const VERSION = "creciendo-v7";
 const CASCARA = [
   "./",
   "./index.html",
@@ -50,7 +50,22 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // El resto: cache primero, red de respaldo.
+  // Las páginas van a la red primero, con la copia guardada sólo para
+  // cuando no hay conexión. Así cada cambio que subís se ve enseguida.
+  if (req.mode === "navigate" || url.pathname.endsWith(".html") || url.pathname.endsWith("/")) {
+    e.respondWith(
+      fetch(req)
+        .then(r => {
+          const copia = r.clone();
+          caches.open(VERSION).then(c => c.put(req, copia));
+          return r;
+        })
+        .catch(() => caches.match(req).then(hit => hit || caches.match("./index.html")))
+    );
+    return;
+  }
+
+  // El resto (logo, íconos, imágenes): cache primero, red de respaldo.
   e.respondWith(
     caches.match(req).then(hit => hit || fetch(req).then(r => {
       const copia = r.clone();
