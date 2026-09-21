@@ -737,19 +737,24 @@ body{
    1) CONFIGURACIÓN — lo único que hay que tocar para poner la radio al aire
    ========================================================================== */
 const STREAM_URLS = [
+  "https://genexservicios.com:8064/stream",
+  "https://genexservicios.com:8064/;",
+  "https://genexservicios.com:8064/stream/1/",
+  "https://genexservicios.com:8064/;stream.mp3",
+  "https://genexservicios.com:8064/",
   "https://genexservicios.com:2000/stream/fmcreciendo"
 ];
-/* Radio alojada en Genex, panel SonicPanel. Esta dirección está probada y
-   funcionando: es el proxy con SSL de SonicPanel sobre el puerto 2000.
+/* Radio alojada en Genex. Por indicacion de Genex se usa el servidor
+   Shoutcast de la emisora en forma directa: puerto 8064, con https.
+   Las rutas cambian segun la version de Shoutcast, asi que el reproductor
+   las prueba en orden y se queda con la primera que suene. La ultima es el
+   proxy del panel (puerto 2000), que suena abierto directo pero rechaza
+   los pedidos que vienen desde otros sitios web.
 
-   El puerto 2000 es el del panel; el 8064 es el del servidor Shoutcast y es
-   el que se carga en el OptiCodec para transmitir, no el que escuchan los
-   oyentes. No los confundas.
+   El 8064 es tambien el puerto que usa el OptiCodec para transmitir, con
+   su propia contrasena, que NUNCA va en este archivo.
 
-   Si algún día Genex cambia la configuración y el botón deja de sonar,
-   probá con test-stream.html: recorre las diez variantes posibles y te marca
-   cuál quedó activa. Se pueden agregar acá como líneas extra y el
-   reproductor las va a ir probando en orden hasta que una suene. */
+   Cuando test-stream-v2.html te diga cual es la que suena, deja solo esa. */
 
 const CATEGORIAS = {
   altovalle:    {nombre:"Alto Valle",    region:true},
