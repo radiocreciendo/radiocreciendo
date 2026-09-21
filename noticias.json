@@ -1,0 +1,120 @@
+{
+  "actualizado": "2026-09-16T09:15:00-03:00",
+  "notas": [
+    {
+      "id": "n01",
+      "cat": "altovalle",
+      "hora": "2026-09-16T09:15:00-03:00",
+      "region": true,
+      "titulo": "Avanza la limpieza del Ex Canal Roca para despejar el desagüe pluvial",
+      "cuerpo": "El Municipio trabaja en el despeje del Ex Canal Roca para dejar libre el paso a la maquinaria del Consorcio de Riego. La idea es que después puedan hacer el mantenimiento del desagüe pluvial sin obstáculos en el camino. El tramo abarca 440 metros lineales, desde calle J. Salto hasta los Manzanos. La tarea está a cargo de la Secretaría de Obras Públicas."
+    },
+    {
+      "id": "n02",
+      "cat": "economia",
+      "hora": "2026-09-15T12:33:00-03:00",
+      "titulo": "El dólar arrancó la semana sin sobresaltos",
+      "cuerpo": "El Banco Nación cotizó la divisa a 1.530 pesos, mientras el libre se movió en torno a los 1.560. El MEP quedó apenas por encima del oficial. El barril Brent se ubicó cerca de los 103 dólares y el WTI algo arriba, un dato que la región mira de cerca por su peso en las regalías. Sin cambios en el esquema cambiario por ahora."
+    },
+    {
+      "id": "n03",
+      "cat": "comunidad",
+      "hora": "2026-09-15T10:30:00-03:00",
+      "titulo": "Refinanciaron más de 500 mil créditos en mora en todo el país",
+      "cuerpo": "Los bancos avanzaron con acuerdos privados para reestructurar préstamos personales y saldos de tarjeta. El movimiento refleja el peso que tomó el endeudamiento de las familias en el último año. En paralelo hay proyectos en el Congreso para ordenar el tema por ley. Los especialistas recomiendan revisar el CFT antes de firmar cualquier refinanciación."
+    },
+    {
+      "id": "n04",
+      "cat": "energia",
+      "hora": "2026-09-15T09:00:00-03:00",
+      "titulo": "Neuquén abre dos jornadas para medir el metano de Vaca Muerta",
+      "cuerpo": "Arrancó en el Centro de Convenciones Domuyo el encuentro Vaca Muerta Metano Near Zero, con autoridades provinciales, empresas operadoras y organismos internacionales. La meta que se plantea la provincia es llevar las emisiones al mínimo posible antes de 2030. Mañana la actividad sigue en el Instituto Vaca Muerta con un perfil más técnico: monitoreo satelital, cámaras de detección y verificación independiente. La inscripción es gratuita y con cupo."
+    },
+    {
+      "id": "n05",
+      "cat": "eventos",
+      "hora": "2026-09-15T09:00:00-03:00",
+      "titulo": "Edifica Neuquén reúne hoy a toda la cadena de la construcción",
+      "cuerpo": "La jornada se hace en el Hotel Grand Brizo Comahue de 9 a 17, con capacitaciones y rondas de negocios. El foco está puesto en el mercado inmobiliario que traccionan Vaca Muerta y el crecimiento de la Confluencia. Participan desarrolladoras, corralones y estudios de arquitectura de toda la región. La entrada es con inscripción previa."
+    },
+    {
+      "id": "n06",
+      "cat": "economia",
+      "hora": "2026-09-15T08:20:00-03:00",
+      "titulo": "El consumo de carne volvió a caer y toca mínimos históricos",
+      "cuerpo": "El consumo de carne vacuna retrocedió cerca de un 10% interanual durante agosto, según los últimos datos del sector. En Neuquén y Río Negro el movimiento se sintió sobre todo en los cortes de todos los días. La combinación de precios en alza y bolsillos ajustados empujó a muchas familias a reemplazar por pollo y cerdo. Los frigoríficos compensan con exportación."
+    },
+    {
+      "id": "n07",
+      "cat": "altovalle",
+      "hora": "2026-09-15T07:45:00-03:00",
+      "titulo": "Cipolletti cerró el operativo oftalmológico Enfocar con buen balance",
+      "cuerpo": "El programa provincial de atención de la vista terminó su paso por la ciudad y dejó cientos de controles hechos en los barrios. Quienes necesitaban anteojos recetados los reciben sin costo a través del sistema público. En paralelo, el Municipio sigue con la campaña de adopción de mascotas junto a la Fundación para el Bienestar Animal. Los turnos se piden por la web municipal."
+    },
+    {
+      "id": "n08",
+      "cat": "nacional",
+      "hora": "2026-09-15T07:10:00-03:00",
+      "titulo": "El Gobierno analiza feriados por la visita del papa León XIV",
+      "cuerpo": "El Vaticano confirmó que el Pontífice estará en el país entre el 8 y el 11 de noviembre. Casa Rosada evalúa declarar asueto o feriado en las jurisdicciones que recorra la comitiva, lo que podría armar un fin de semana largo. La agenda incluiría Luján entre los destinos. Todavía no hay decreto firmado ni confirmación oficial del cronograma."
+    },
+    {
+      "id": "n09",
+      "cat": "deportes",
+      "hora": "2026-09-15T06:50:00-03:00",
+      "titulo": "La Sub 19 debuta el viernes en los Juegos Suramericanos",
+      "cuerpo": "La Selección argentina juvenil quedó en el Grupo B junto a Paraguay, Uruguay y Venezuela. El estreno es este viernes 17 en Rosario, con transmisión abierta. El plantel viene de una gira de preparación corta pero con buenos resultados. Clasifican los dos primeros de cada zona a semifinales."
+    },
+    {
+      "id": "n10",
+      "cat": "economia",
+      "hora": "2026-09-14T22:40:00-03:00",
+      "titulo": "Los alimentos volvieron a empujar la inflación de septiembre",
+      "cuerpo": "Las mediciones privadas de las primeras semanas muestran subas fuertes en góndola, con carnicería y verdulería a la cabeza. La presión sobre el índice general se mantiene alta pese a la desaceleración de otros rubros. En el Alto Valle el relevamiento marca diferencias de hasta el 30% entre comercios. El dato oficial se conoce a mediados del mes que viene.",
+      "region": true
+    },
+    {
+      "id": "n11",
+      "cat": "internacional",
+      "hora": "2026-09-14T20:05:00-03:00",
+      "titulo": "La ONU pidió regular con urgencia la inteligencia artificial",
+      "cuerpo": "El Alto Comisionado para los Derechos Humanos, Volker Türk, advirtió que el avance de estas tecnologías toca prácticamente todos los derechos fundamentales. Reclamó marcos regulatorios que lleguen antes que los daños, no después. Mencionó especialmente los sesgos en decisiones automatizadas y la vigilancia masiva. El planteo se suma al debate que ya está abierto en varios países."
+    },
+    {
+      "id": "n12",
+      "cat": "comunidad",
+      "hora": "2026-09-14T17:23:00-03:00",
+      "titulo": "Adopciones en Río Negro: buscan acortar los tiempos de espera",
+      "cuerpo": "Especialistas de la provincia plantearon que el cuello de botella no está en la falta de familias sino en la duración de los procesos judiciales. La propuesta pasa por unificar criterios entre juzgados y fortalecer los equipos técnicos. Hay chicos que esperan años una resolución definitiva. El registro provincial de adoptantes sigue abierto todo el año.",
+      "region": true
+    },
+    {
+      "id": "n13",
+      "cat": "nacional",
+      "hora": "2026-09-14T17:19:00-03:00",
+      "titulo": "Fallo en la causa Sueños Compartidos: absolvieron a De Vido",
+      "cuerpo": "El tribunal resolvió la absolución del exministro de Planificación en el expediente por el manejo de fondos del plan de viviendas. Para José López y los hermanos Schoklender dictó penas en suspenso. La sentencia llegó después de un juicio que se extendió por años. Las partes ya anticiparon que van a apelar ante instancias superiores."
+    },
+    {
+      "id": "n14",
+      "cat": "deportes",
+      "hora": "2026-09-14T17:14:00-03:00",
+      "titulo": "El Gran Premio de Azerbaiyán se corre un sábado, algo inédito",
+      "cuerpo": "La organización movió la carrera principal por un cruce de agenda con otro evento en Bakú. Es una excepción rara en el calendario de la Fórmula 1, que casi siempre define el domingo. Los horarios de clasificación también se adelantan un día. En Argentina la largada queda en plena mañana."
+    },
+    {
+      "id": "n15",
+      "cat": "neuquen",
+      "hora": "2026-09-14T16:30:00-03:00",
+      "titulo": "Confirman la pavimentación de la Ruta 67, clave para Vaca Muerta",
+      "cuerpo": "Las máquinas ya se mueven en el trazado y la obra será la primera financiada con el fideicomiso petrolero. Va a permitir un acceso directo desde Neuquén capital hacia la zona de yacimientos. También avanza el bypass de Añelo, pensado para descomprimir el tránsito pesado. Se proyecta más obra vial en la Región Confluencia para lo que queda del año."
+    },
+    {
+      "id": "n16",
+      "cat": "bariloche",
+      "hora": "2026-09-14T11:15:00-03:00",
+      "titulo": "Secuestran dos cargamentos de leña extraída ilegalmente en Mallín Ahogado",
+      "cuerpo": "Un operativo del destacamento de la zona interceptó los traslados y labró actas de infracción a los responsables. La extracción sin permiso es un problema recurrente en la cordillera, sobre todo antes del invierno. La leña quedó a disposición de la autoridad forestal. Desde el área ambiental recordaron que el corte requiere autorización previa."
+    }
+  ]
+}

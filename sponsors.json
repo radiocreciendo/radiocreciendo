@@ -1,0 +1,38 @@
+{
+  "actualizado": "2026-09-15T21:00:00-03:00",
+  "rotacion": 7,
+  "sponsors": [
+    {
+      "id": "s01",
+      "nombre": "Supermercados La Anónima",
+      "imagen": "img/sponsors/la-anonima.jpg",
+      "enlace": "",
+      "activo": true,
+      "fijo": true
+    },
+    {
+      "id": "s02",
+      "nombre": "Ferretería El Valle",
+      "imagen": "img/sponsors/demo-1.jpg",
+      "enlace": "https://wa.me/5492994128800",
+      "activo": true,
+      "fijo": false
+    },
+    {
+      "id": "s03",
+      "nombre": "Panadería La Espiga",
+      "imagen": "img/sponsors/demo-2.jpg",
+      "enlace": "",
+      "activo": true,
+      "fijo": false
+    },
+    {
+      "id": "s04",
+      "nombre": "Cooperativa Agrícola Cipolletti",
+      "imagen": "img/sponsors/demo-3.jpg",
+      "enlace": "",
+      "activo": true,
+      "fijo": false
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+Acá van los MP3 de los episodios.
+
+Nombre sugerido: aaaa-mm-dd-tema.mp3   (ej: 2026-09-15-metano.mp3)
+Duración máxima: 5 minutos.
+Formato recomendado: MP3, 96 o 128 kbps, mono para voz sola.
+
+El panel (panel.html, pestaña Podcasts) mide la duración del archivo
+y arma el nombre; el MP3 se sube acá por FTP o administrador de archivos.

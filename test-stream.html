@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es-AR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Probar el stream · Radio Creciendo</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:640px;margin:0 auto;padding:24px;background:#FAF6F9;color:#241B27;line-height:1.5}
+h1{font-size:1.2rem}
+li{margin-bottom:14px;padding:12px;background:#fff;border:1px solid #E9DFE7;border-radius:10px;list-style:none}
+code{font-size:.82rem;word-break:break-all;display:block;margin-bottom:8px;color:#851B80}
+b[data-r="ok"]{color:#048F3F}
+b[data-r="no"]{color:#B4442F}
+button{font:inherit;font-weight:700;background:#048F3F;color:#fff;border:0;padding:11px 20px;border-radius:9px;cursor:pointer}
+</style></head><body>
+<h1>Probar las direcciones del stream</h1>
+<p>Tocá el botón y esperá unos segundos. La que diga <b data-r="ok">SUENA</b> es la buena:
+pasámela y la dejo fija en el sitio.</p>
+<button id="ir">Probar todas</button>
+<ul id="lista"></ul>
+<script>
+const URLS = [
+  "https://genexservicios.com:2000/stream/fmcreciendo",
+  "https://genexservicios.com:2000/listen/fmcreciendo/stream",
+  "https://genexservicios.com:2000/fmcreciendo",
+  "https://genexservicios.com:2000/radio/8064/stream",
+  "https://genexservicios.com:2000/fmcreciendo/stream",
+  "https://genexservicios.com:8064/stream",
+  "https://genexservicios.com:8064/;stream.mp3",
+  "https://genexservicios.com:8064/live",
+  "https://genexservicios.com:8064/;",
+  "https://genexservicios.com:8064/stream.mp3"
+];
+const lista = document.getElementById("lista");
+URLS.forEach((u,i) => {
+  const li = document.createElement("li");
+  li.innerHTML = '<code>'+u+'</code><b id="r'+i+'">esperando…</b>';
+  lista.appendChild(li);
+});
+document.getElementById("ir").addEventListener("click", () => {
+  URLS.forEach((u,i) => {
+    const r = document.getElementById("r"+i);
+    const a = new Audio();
+    a.volume = 0.0001;
+    a.src = u;
+    let listo = false;
+    a.addEventListener("playing", () => { listo = true; r.textContent = "SUENA"; r.dataset.r="ok"; a.pause(); });
+    a.addEventListener("error", () => { if(!listo){ r.textContent = "no responde"; r.dataset.r="no"; } });
+    r.textContent = "probando…"; r.removeAttribute("data-r");
+    a.play().catch(() => { if(!listo){ r.textContent = "no responde"; r.dataset.r="no"; } });
+    setTimeout(() => { if(!listo){ r.textContent = "sin respuesta"; r.dataset.r="no"; a.pause(); } }, 12000);
+  });
+});
+</script></body></html>

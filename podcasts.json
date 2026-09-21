@@ -1,0 +1,41 @@
+{
+  "actualizado": "2026-09-15T20:00:00-03:00",
+  "episodios": [
+    {
+      "id": "e00",
+      "cat": "general",
+      "fecha": "2026-09-15T20:30:00-03:00",
+      "titulo": "Cortina de prueba — para verificar el reproductor",
+      "descripcion": "Audio de prueba de 14 segundos. Sirve para confirmar que el reproductor de episodios funciona en el servidor antes de subir contenido real. Borralo cuando cargues el primer episodio de verdad.",
+      "audio": "podcasts/cortina-demo.mp3",
+      "duracion": 14
+    },
+    {
+      "id": "e01",
+      "cat": "actualidad",
+      "fecha": "2026-09-15T11:00:00-03:00",
+      "titulo": "Qué se discute en las jornadas del metano en Neuquén",
+      "descripcion": "Resumen de las dos jornadas del encuentro Vaca Muerta Metano Near Zero: qué se mide, quiénes controlan y por qué le importa al Alto Valle.",
+      "audio": "podcasts/2026-09-15-metano.mp3",
+      "duracion": 258
+    },
+    {
+      "id": "e02",
+      "cat": "deportes",
+      "fecha": "2026-09-14T19:30:00-03:00",
+      "titulo": "La previa del debut de la Sub 19 en Rosario",
+      "descripcion": "Cómo llega el plantel juvenil al estreno del viernes, quiénes son los nombres a seguir y qué necesita para pasar de zona.",
+      "audio": "podcasts/2026-09-14-sub19.mp3",
+      "duracion": 214
+    },
+    {
+      "id": "e03",
+      "cat": "cultura",
+      "fecha": "2026-09-14T10:00:00-03:00",
+      "titulo": "Cipolletti, 1989: la ciudad cuando nació la primera FM",
+      "descripcion": "Un recorrido corto por cómo era el dial del Alto Valle antes de que Creciendo saliera al aire, con testimonios de quienes estuvieron en aquel primer día.",
+      "audio": "podcasts/2026-09-14-1989.mp3",
+      "duracion": 295
+    }
+  ]
+}

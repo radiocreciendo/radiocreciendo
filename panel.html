@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel de carga · Radio Creciendo</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#100C1B; --ciruela:#340634; --magenta:#851B80; --senal:#048F3F;
+  --papel:#FAF6F9; --tinta:#241B27; --gris:#6B5E6D; --linea:#E9DFE7; --tarjeta:#fff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--papel:#16101C;--tinta:#F3ECF2;--gris:#A08FA6;--linea:#2D2336;--tarjeta:#1C1524}
+}
+:root[data-theme="dark"]{--papel:#16101C;--tinta:#F3ECF2;--gris:#A08FA6;--linea:#2D2336;--tarjeta:#1C1524}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:'Archivo',system-ui,sans-serif;font-size:16px;line-height:1.5}
+:focus-visible{outline:3px solid var(--senal);outline-offset:2px}
+header{background:linear-gradient(120deg,var(--noche),var(--ciruela) 60%,var(--magenta));color:#fff;padding:22px 20px}
+header h1{margin:0;font-size:1.22rem;font-weight:800;letter-spacing:-.01em}
+header p{margin:4px 0 0;font-size:.85rem;color:rgba(255,255,255,.7)}
+main{max-width:800px;margin:0 auto;padding:22px 18px 110px}
+.acciones{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px}
+button{font-family:inherit;font-size:.9rem;font-weight:700;border:1px solid var(--linea);background:var(--tarjeta);color:var(--tinta);padding:9px 16px;border-radius:9px;cursor:pointer}
+button:hover{border-color:var(--gris)}
+button.fuerte{background:var(--senal);border-color:var(--senal);color:#fff}
+button.suave{background:transparent;color:var(--gris);border-style:dashed}
+.nota{background:var(--tarjeta);border:1px solid var(--linea);border-radius:13px;padding:16px;margin-bottom:13px}
+.fila{display:flex;gap:11px;flex-wrap:wrap;margin-bottom:11px}
+.campo{flex:1;min-width:150px}
+label{display:block;font-size:.76rem;font-weight:700;color:var(--gris);margin-bottom:4px}
+input,select,textarea{width:100%;font-family:inherit;font-size:.94rem;color:var(--tinta);background:var(--papel);border:1px solid var(--linea);border-radius:8px;padding:9px 11px}
+textarea{resize:vertical;min-height:92px;line-height:1.5}
+.contador{font-size:.75rem;color:var(--gris);margin-top:4px}
+.contador[data-largo="pasado"]{color:#B4442F;font-weight:700}
+.contador[data-largo="justo"]{color:var(--senal);font-weight:700}
+.pie-nota{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+.borrar{border:0;background:none;color:#B4442F;font-size:.84rem;padding:5px 0}
+.salida{position:fixed;left:0;right:0;bottom:0;background:var(--noche);color:#fff;padding:13px 18px;display:flex;gap:11px;align-items:center;flex-wrap:wrap}
+.salida span{font-size:.82rem;color:rgba(255,255,255,.65);flex:1;min-width:150px}
+.tabs{display:flex;gap:4px;background:var(--linea);padding:4px;border-radius:999px;margin-bottom:20px}
+.tab{flex:1;border:0;background:transparent;color:var(--gris);border-radius:999px;padding:9px 4px;font-weight:700;font-size:.8rem;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--tarjeta);color:var(--tinta)}
+.subir{border:2px dashed var(--linea);border-radius:11px;padding:14px;text-align:center;margin-bottom:11px}
+.subir input[type=file]{display:none}
+.subir label{display:inline-block;background:var(--senal);color:#fff;font-weight:700;font-size:.88rem;padding:9px 16px;border-radius:9px;cursor:pointer;margin-bottom:0}
+.subir p{margin:9px 0 0;font-size:.8rem;color:var(--gris)}
+.dur{font-weight:800;font-size:.88rem;margin-top:8px}
+.dur[data-ok="1"]{color:var(--senal)}
+.dur[data-ok="0"]{color:#B4442F}
+.aviso{background:rgba(4,143,63,.1);border:1px solid var(--senal);color:var(--tinta);padding:12px 14px;border-radius:10px;font-size:.87rem;margin-bottom:20px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Panel de carga · Radio Creciendo</h1>
+  <p>Escribí las notas del día y bajá el archivo actualizado</p>
+</header>
+
+<main>
+  <div class="tabs">
+    <button class="tab" id="tabNotas" aria-selected="true">Notas</button>
+    <button class="tab" id="tabPod" aria-selected="false">Podcasts</button>
+    <button class="tab" id="tabSpon" aria-selected="false">Sponsors</button>
+    <button class="tab" id="tabFarm" aria-selected="false">Farmacias</button>
+  </div>
+
+  <section id="vistaNotas">
+    <div class="aviso">
+      Cargá o editá las notas acá abajo. Cuando termines, tocá <b>Bajar noticias.json</b>
+      y subí ese archivo a la raíz del sitio, reemplazando el anterior. El feed se actualiza solo.
+    </div>
+
+    <div class="acciones">
+      <button class="fuerte" id="nueva">+ Nota nueva</button>
+      <button id="cargar">Cargar las del sitio</button>
+      <button class="suave" id="limpiar">Vaciar todo</button>
+    </div>
+
+    <div id="lista"></div>
+  </section>
+
+  <section id="vistaFarm" hidden>
+    <div class="aviso">
+      Pegá el cronograma del mes en el cuadro de abajo, una línea por día, con
+      este formato:<br>
+      <code style="font-size:.84rem">1: Norte - La Esmeralda 1604 / Del Centro - Roca 607</code><br>
+      El día, dos puntos, y cada farmacia con su dirección separada por un guion.
+      Si son dos, van separadas por barra. Si es una sola, no pongas barra.
+    </div>
+
+    <div class="fila">
+      <div class="campo" style="flex:0 0 150px"><label>Mes</label>
+        <select id="farmMes"></select></div>
+      <div class="campo" style="flex:0 0 110px"><label>Año</label>
+        <input type="number" id="farmAnio" min="2026" max="2100"></div>
+      <div class="campo" style="flex:0 0 130px"><label>Empieza a las</label>
+        <input type="text" id="farmHora" placeholder="08:30"></div>
+    </div>
+
+    <div class="acciones">
+      <button id="cargarFarm">Cargar el del sitio</button>
+      <button class="suave" id="limpiarFarm">Vaciar</button>
+    </div>
+
+    <div class="campo">
+      <label>Cronograma del mes</label>
+      <textarea id="farmTexto" style="min-height:300px;font-family:ui-monospace,Menlo,monospace;font-size:.84rem"></textarea>
+      <div class="dur" id="farmCheck"></div>
+    </div>
+  </section>
+
+  <section id="vistaSpon" hidden>
+    <div class="aviso">
+      El arte se sube siempre en <b>1920 × 400 px</b>. Si mandás otra medida el panel
+      te avisa. Subí el JPG a la carpeta <b>img/sponsors/</b> y después bajá el
+      <b>sponsors.json</b> actualizado.
+    </div>
+
+    <div class="acciones">
+      <button class="fuerte" id="nuevoSpon">+ Auspiciante nuevo</button>
+      <button id="cargarSpon">Cargar los del sitio</button>
+      <button class="suave" id="limpiarSpon">Vaciar todo</button>
+    </div>
+
+    <div class="campo" style="margin-bottom:18px;max-width:280px">
+      <label>Segundos por aviso</label>
+      <input type="number" id="rotacion" min="3" max="30" value="7">
+    </div>
+
+    <div id="listaSpon"></div>
+  </section>
+
+  <section id="vistaPod" hidden>
+    <div class="aviso">
+      Elegí el MP3 y el panel te mide la duración: el límite es de <b>5 minutos</b>.
+      Después subí el audio a la carpeta <b>podcasts/</b> del sitio y bajá el
+      <b>podcasts.json</b> actualizado.
+    </div>
+
+    <div class="acciones">
+      <button class="fuerte" id="nuevoEpi">+ Episodio nuevo</button>
+      <button id="cargarEpi">Cargar los del sitio</button>
+      <button class="suave" id="limpiarEpi">Vaciar todo</button>
+    </div>
+
+    <div id="listaEpi"></div>
+  </section>
+</main>
+
+<div class="salida">
+  <span id="estado">Sin cambios</span>
+  <button id="copiar">Copiar</button>
+  <button class="fuerte" id="bajar">Bajar noticias.json</button>
+</div>
+
+<script>
+const CATEGORIAS = {
+  altovalle:"Alto Valle", neuquen:"Neuquén", bariloche:"Bariloche", energia:"Energía",
+  nacional:"Nacional", internacional:"Internacional", deportes:"Deportes",
+  economia:"Economía", comunidad:"Comunidad", eventos:"Eventos"
+};
+
+const lista  = document.getElementById("lista");
+const estado = document.getElementById("estado");
+let notas = [];
+
+function ahoraLocal(){
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0,16);
+}
+
+function aISO(valor){
+  // guarda con huso -03:00 (hora de Argentina)
+  return valor ? valor + ":00-03:00" : new Date().toISOString();
+}
+
+function aInput(iso){
+  try{
+    const d = new Date(iso);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0,16);
+  }catch(e){ return ahoraLocal(); }
+}
+
+function marcar(){
+  estado.textContent = notas.length + (notas.length === 1 ? " nota lista" : " notas listas");
+  try{ localStorage.setItem("creciendo_borrador", JSON.stringify(notas)); }catch(e){}
+}
+
+function pintar(){
+  lista.innerHTML = "";
+  notas.forEach((n, i) => {
+    const el = document.createElement("div");
+    el.className = "nota";
+    el.innerHTML =
+      '<div class="fila">' +
+        '<div class="campo" style="flex:0 0 190px"><label>Sección</label><select data-k="cat"></select></div>' +
+        '<div class="campo" style="flex:0 0 210px"><label>Fecha y hora</label><input type="datetime-local" data-k="hora"></div>' +
+      '</div>' +
+      '<div class="campo" style="margin-bottom:11px"><label>Título</label><input type="text" data-k="titulo" maxlength="95" placeholder="Una línea, clara y al hueso"></div>' +
+      '<div class="campo"><label>Cuerpo (apuntá a cuatro líneas)</label><textarea data-k="cuerpo" placeholder="Cuatro oraciones cortas: qué pasó, dónde, a quién le importa y qué sigue."></textarea>' +
+      '<div class="contador"></div></div>' +
+      '<div class="pie-nota"><button class="borrar">Borrar esta nota</button></div>';
+
+    const sel = el.querySelector('[data-k="cat"]');
+    Object.entries(CATEGORIAS).forEach(([k,v]) => {
+      const o = document.createElement("option");
+      o.value = k; o.textContent = v;
+      if(n.cat === k) o.selected = true;
+      sel.appendChild(o);
+    });
+
+    el.querySelector('[data-k="hora"]').value   = aInput(n.hora);
+    el.querySelector('[data-k="titulo"]').value = n.titulo || "";
+    const ta = el.querySelector('[data-k="cuerpo"]');
+    ta.value = n.cuerpo || "";
+
+    const cont = el.querySelector(".contador");
+    function contar(){
+      const c = ta.value.trim().length;
+      cont.textContent = c + " caracteres" + (c ? " · " + (c < 300 ? "va a quedar corto" : c <= 480 ? "cuatro líneas justas" : "se pasa de cuatro líneas") : "");
+      cont.dataset.largo = !c ? "" : c < 300 ? "corto" : c <= 480 ? "justo" : "pasado";
+    }
+    contar();
+
+    el.addEventListener("input", e => {
+      const k = e.target.dataset.k;
+      if(!k) return;
+      notas[i][k] = (k === "hora") ? aISO(e.target.value) : e.target.value;
+      if(k === "cuerpo") contar();
+      marcar();
+    });
+
+    el.querySelector(".borrar").addEventListener("click", () => {
+      notas.splice(i,1); pintar(); marcar();
+    });
+
+    lista.appendChild(el);
+  });
+  if(!notas.length) lista.innerHTML = '<p style="color:var(--gris);text-align:center;padding:36px 0">Todavía no hay notas. Tocá “Nota nueva” para empezar.</p>';
+}
+
+function ordenadas(){
+  return notas.slice().sort((a,b) => new Date(b.hora) - new Date(a.hora))
+    .map((n,i) => ({id:"n"+String(i+1).padStart(2,"0"), cat:n.cat, hora:n.hora, titulo:n.titulo, cuerpo:n.cuerpo}));
+}
+
+function archivo(){
+  return JSON.stringify({actualizado:new Date().toISOString(), notas:ordenadas()}, null, 2);
+}
+
+document.getElementById("nueva").addEventListener("click", () => {
+  notas.unshift({cat:"altovalle", hora:aISO(ahoraLocal()), titulo:"", cuerpo:""});
+  pintar(); marcar();
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+document.getElementById("cargar").addEventListener("click", async () => {
+  try{
+    const r = await fetch("noticias.json?v=" + Date.now(), {cache:"no-store"});
+    const d = await r.json();
+    notas = d.notas || [];
+    pintar(); marcar();
+  }catch(e){
+    estado.textContent = "No se pudo leer noticias.json desde este servidor.";
+  }
+});
+
+document.getElementById("limpiar").addEventListener("click", () => {
+  if(confirm("¿Borrar todas las notas del panel? El sitio publicado no cambia hasta que subas el archivo.")){
+    notas = []; pintar(); marcar();
+  }
+});
+
+document.getElementById("bajar").addEventListener("click", () => {
+  const cont = pestania === "podcasts" ? archivoPod()
+             : pestania === "sponsors" ? archivoSpon()
+             : pestania === "farmacias" ? archivoFarm() : archivo();
+  const b = new Blob([cont], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(b);
+  a.download = PESTANIAS[pestania].archivo;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  estado.textContent = "Archivo descargado. Subilo a la raíz del sitio.";
+});
+
+document.getElementById("copiar").addEventListener("click", async () => {
+  try{
+    const cont = pestania === "podcasts" ? archivoPod()
+               : pestania === "sponsors" ? archivoSpon()
+               : pestania === "farmacias" ? archivoFarm() : archivo();
+    await navigator.clipboard.writeText(cont);
+    estado.textContent = "Copiado. Pegalo en " + PESTANIAS[pestania].archivo + ".";
+  }catch(e){
+    estado.textContent = "El navegador no dejó copiar. Usá el botón de bajar.";
+  }
+});
+
+try{
+  const b = localStorage.getItem("creciendo_borrador");
+  if(b) notas = JSON.parse(b);
+}catch(e){}
+pintar(); marcar();
+
+/* ==========================================================================
+   PODCASTS
+   ========================================================================== */
+const CAT_POD = {
+  actualidad:"Actualidad", general:"Interés general",
+  deportes:"Deportes", cultura:"Cultura"
+};
+const TOPE = 300;   // 5 minutos en segundos
+
+const listaEpi = document.getElementById("listaEpi");
+let epis = [];
+let pestania = "notas";
+
+function mmss(s){
+  s = Math.max(0, Math.round(s || 0));
+  return Math.floor(s/60) + ":" + String(s % 60).padStart(2,"0");
+}
+
+function slug(t){
+  return (t || "episodio").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 45);
+}
+
+function marcarEpi(){
+  estado.textContent = epis.length + (epis.length === 1 ? " episodio listo" : " episodios listos");
+  try{ localStorage.setItem("creciendo_podcasts", JSON.stringify(epis)); }catch(e){}
+}
+
+function pintarEpi(){
+  listaEpi.innerHTML = "";
+  epis.forEach((n, i) => {
+    const el = document.createElement("div");
+    el.className = "nota";
+    el.innerHTML =
+      '<div class="subir">' +
+        '<input type="file" accept="audio/*" id="f' + i + '">' +
+        '<label for="f' + i + '">Elegir el archivo de audio</label>' +
+        '<p>No se sube desde acá: el panel sólo lo mide y arma el nombre.</p>' +
+        '<div class="dur"></div>' +
+      '</div>' +
+      '<div class="fila">' +
+        '<div class="campo" style="flex:0 0 180px"><label>Sección</label><select data-k="cat"></select></div>' +
+        '<div class="campo" style="flex:0 0 210px"><label>Fecha y hora</label><input type="datetime-local" data-k="fecha"></div>' +
+      '</div>' +
+      '<div class="campo" style="margin-bottom:11px"><label>Título</label><input type="text" data-k="titulo" maxlength="95" placeholder="De qué habla el episodio"></div>' +
+      '<div class="campo" style="margin-bottom:11px"><label>Descripción (dos o tres líneas)</label><textarea data-k="descripcion" style="min-height:70px"></textarea></div>' +
+      '<div class="fila">' +
+        '<div class="campo"><label>Ruta del audio en el sitio</label><input type="text" data-k="audio" placeholder="podcasts/archivo.mp3"></div>' +
+        '<div class="campo" style="flex:0 0 120px"><label>Duración (seg)</label><input type="number" data-k="duracion" min="1" max="600"></div>' +
+      '</div>' +
+      '<div class="pie-nota"><button class="borrar">Borrar este episodio</button></div>';
+
+    const sel = el.querySelector('[data-k="cat"]');
+    Object.entries(CAT_POD).forEach(([k,v]) => {
+      const op = document.createElement("option");
+      op.value = k; op.textContent = v;
+      if(n.cat === k) op.selected = true;
+      sel.appendChild(op);
+    });
+
+    el.querySelector('[data-k="fecha"]').value       = aInput(n.fecha);
+    el.querySelector('[data-k="titulo"]').value      = n.titulo || "";
+    el.querySelector('[data-k="descripcion"]').value = n.descripcion || "";
+    el.querySelector('[data-k="audio"]').value       = n.audio || "";
+    el.querySelector('[data-k="duracion"]').value    = n.duracion || "";
+
+    const cajaDur = el.querySelector(".dur");
+    function verDur(seg){
+      if(!seg){ cajaDur.textContent = ""; cajaDur.removeAttribute("data-ok"); return; }
+      const ok = seg <= TOPE;
+      cajaDur.dataset.ok = ok ? "1" : "0";
+      cajaDur.textContent = ok
+        ? "Duración " + mmss(seg) + " — entra dentro del límite"
+        : "Duración " + mmss(seg) + " — se pasa de los 5 minutos, hay que recortarlo";
+    }
+    verDur(n.duracion);
+
+    el.querySelector('input[type=file]').addEventListener("change", ev => {
+      const f = ev.target.files[0];
+      if(!f) return;
+      const a = new Audio(URL.createObjectURL(f));
+      a.addEventListener("loadedmetadata", () => {
+        const seg = Math.round(a.duration);
+        epis[i].duracion = seg;
+        el.querySelector('[data-k="duracion"]').value = seg;
+        if(!epis[i].audio){
+          const nom = slug(epis[i].titulo || f.name.replace(/\.[^.]+$/, ""));
+          epis[i].audio = "podcasts/" + nom + ".mp3";
+          el.querySelector('[data-k="audio"]').value = epis[i].audio;
+        }
+        verDur(seg);
+        URL.revokeObjectURL(a.src);
+        marcarEpi();
+      });
+      a.addEventListener("error", () => { cajaDur.dataset.ok = "0"; cajaDur.textContent = "No se pudo leer ese archivo."; });
+    });
+
+    el.addEventListener("input", ev => {
+      const k = ev.target.dataset.k;
+      if(!k) return;
+      epis[i][k] = (k === "fecha") ? aISO(ev.target.value)
+                 : (k === "duracion") ? Number(ev.target.value) : ev.target.value;
+      if(k === "duracion") verDur(epis[i].duracion);
+      marcarEpi();
+    });
+
+    el.querySelector(".borrar").addEventListener("click", () => { epis.splice(i,1); pintarEpi(); marcarEpi(); });
+    listaEpi.appendChild(el);
+  });
+  if(!epis.length) listaEpi.innerHTML = '<p style="color:var(--gris);text-align:center;padding:36px 0">Todavía no hay episodios. Tocá “Episodio nuevo”.</p>';
+}
+
+function archivoPod(){
+  const orden = epis.slice().sort((a,b) => new Date(b.fecha) - new Date(a.fecha))
+    .map((n,i) => ({id:"e"+String(i+1).padStart(2,"0"), cat:n.cat, fecha:n.fecha,
+                    titulo:n.titulo, descripcion:n.descripcion, audio:n.audio, duracion:n.duracion}));
+  return JSON.stringify({actualizado:new Date().toISOString(), episodios:orden}, null, 2);
+}
+
+const PESTANIAS = {
+  notas:    {tab:"tabNotas", vista:"vistaNotas", archivo:"noticias.json"},
+  podcasts: {tab:"tabPod",   vista:"vistaPod",   archivo:"podcasts.json"},
+  sponsors: {tab:"tabSpon",  vista:"vistaSpon",  archivo:"sponsors.json"},
+  farmacias:{tab:"tabFarm",  vista:"vistaFarm",  archivo:"farmacias.json"}
+};
+
+function verPestania(cual){
+  pestania = cual;
+  Object.entries(PESTANIAS).forEach(([k,v]) => {
+    document.getElementById(v.tab).setAttribute("aria-selected", k === cual ? "true" : "false");
+    document.getElementById(v.vista).hidden = k !== cual;
+  });
+  document.getElementById("bajar").textContent = "Bajar " + PESTANIAS[cual].archivo;
+  if(cual === "podcasts") marcarEpi();
+  else if(cual === "sponsors") marcarSpon();
+  else if(cual === "farmacias") revisarFarmacias();
+  else marcar();
+}
+
+document.getElementById("tabNotas").addEventListener("click", () => verPestania("notas"));
+document.getElementById("tabPod").addEventListener("click",   () => verPestania("podcasts"));
+document.getElementById("tabSpon").addEventListener("click",  () => verPestania("sponsors"));
+document.getElementById("tabFarm").addEventListener("click",  () => verPestania("farmacias"));
+
+document.getElementById("nuevoEpi").addEventListener("click", () => {
+  epis.unshift({cat:"actualidad", fecha:aISO(ahoraLocal()), titulo:"", descripcion:"", audio:"", duracion:0});
+  pintarEpi(); marcarEpi(); window.scrollTo({top:0, behavior:"smooth"});
+});
+
+document.getElementById("cargarEpi").addEventListener("click", async () => {
+  try{
+    const r = await fetch("podcasts.json?v=" + Date.now(), {cache:"no-store"});
+    const d = await r.json();
+    epis = d.episodios || [];
+    pintarEpi(); marcarEpi();
+  }catch(e){ estado.textContent = "No se pudo leer podcasts.json desde este servidor."; }
+});
+
+document.getElementById("limpiarEpi").addEventListener("click", () => {
+  if(confirm("¿Borrar todos los episodios del panel?")){ epis = []; pintarEpi(); marcarEpi(); }
+});
+
+try{
+  const g = localStorage.getItem("creciendo_podcasts");
+  if(g) epis = JSON.parse(g);
+}catch(e){}
+pintarEpi();
+
+/* ==========================================================================
+   SPONSORS
+   ========================================================================== */
+const ANCHO_ARTE = 1920, ALTO_ARTE = 400;
+const listaSpon = document.getElementById("listaSpon");
+let spons = [];
+
+function marcarSpon(){
+  estado.textContent = spons.length + (spons.length === 1 ? " auspiciante" : " auspiciantes");
+  try{ localStorage.setItem("creciendo_sponsors", JSON.stringify(spons)); }catch(e){}
+}
+
+function pintarSpon(){
+  listaSpon.innerHTML = "";
+  spons.forEach((s, i) => {
+    const el = document.createElement("div");
+    el.className = "nota";
+    el.innerHTML =
+      '<div class="subir">' +
+        '<input type="file" accept="image/*" id="s' + i + '">' +
+        '<label for="s' + i + '">Revisar el arte</label>' +
+        '<p>El panel comprueba la medida. La imagen se sube por FTP a img/sponsors/</p>' +
+        '<div class="dur"></div>' +
+      '</div>' +
+      '<div class="campo" style="margin-bottom:11px"><label>Nombre del comercio</label><input type="text" data-k="nombre" maxlength="70"></div>' +
+      '<div class="campo" style="margin-bottom:11px"><label>Ruta de la imagen</label><input type="text" data-k="imagen" placeholder="img/sponsors/comercio.jpg"></div>' +
+      '<div class="campo" style="margin-bottom:11px"><label>Enlace al tocar (opcional: web o WhatsApp)</label><input type="text" data-k="enlace" placeholder="https://wa.me/549299..."></div>' +
+      '<div class="pie-nota">' +
+        '<div style="display:flex;gap:16px;flex-wrap:wrap">' +
+          '<label style="display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--tinta);margin:0">' +
+            '<input type="checkbox" data-k="activo" style="width:auto">Al aire</label>' +
+          '<label style="display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--tinta);margin:0">' +
+            '<input type="checkbox" data-k="fijo" style="width:auto">Siempre primero</label>' +
+        '</div>' +
+        '<button class="borrar">Borrar</button>' +
+      '</div>';
+
+    el.querySelector('[data-k="nombre"]').value = s.nombre || "";
+    el.querySelector('[data-k="imagen"]').value = s.imagen || "";
+    el.querySelector('[data-k="enlace"]').value = s.enlace || "";
+    el.querySelector('[data-k="activo"]').checked = s.activo !== false;
+    el.querySelector('[data-k="fijo"]').checked = s.fijo === true;
+
+    const aviso = el.querySelector(".dur");
+    el.querySelector('input[type=file]').addEventListener("change", ev => {
+      const f = ev.target.files[0];
+      if(!f) return;
+      const im = new Image();
+      im.onload = () => {
+        const bien = im.naturalWidth === ANCHO_ARTE && im.naturalHeight === ALTO_ARTE;
+        const prop = (im.naturalWidth / im.naturalHeight).toFixed(2);
+        aviso.dataset.ok = bien ? "1" : "0";
+        aviso.textContent = bien
+          ? "Medida correcta: 1920 \u00d7 400"
+          : "Lleg\u00f3 en " + im.naturalWidth + " \u00d7 " + im.naturalHeight + " (proporci\u00f3n " + prop + "). Ped\u00ed el arte en 1920 \u00d7 400.";
+        if(!spons[i].imagen){
+          spons[i].imagen = "img/sponsors/" + f.name.replace(/\s+/g, "-").toLowerCase();
+          el.querySelector('[data-k="imagen"]').value = spons[i].imagen;
+          marcarSpon();
+        }
+        URL.revokeObjectURL(im.src);
+      };
+      im.onerror = () => { aviso.dataset.ok = "0"; aviso.textContent = "No se pudo leer esa imagen."; };
+      im.src = URL.createObjectURL(f);
+    });
+
+    el.addEventListener("input", ev => {
+      const k = ev.target.dataset.k;
+      if(!k) return;
+      spons[i][k] = (k === "activo" || k === "fijo") ? ev.target.checked : ev.target.value;
+      marcarSpon();
+    });
+
+    el.querySelector(".borrar").addEventListener("click", () => { spons.splice(i,1); pintarSpon(); marcarSpon(); });
+    listaSpon.appendChild(el);
+  });
+  if(!spons.length) listaSpon.innerHTML = '<p style="color:var(--gris);text-align:center;padding:36px 0">Todav\u00eda no hay auspiciantes cargados.</p>';
+}
+
+function archivoSpon(){
+  return JSON.stringify({
+    actualizado: new Date().toISOString(),
+    rotacion: Number(document.getElementById("rotacion").value) || 7,
+    sponsors: spons.map((s,i) => ({id:"s"+String(i+1).padStart(2,"0"), nombre:s.nombre,
+                                   imagen:s.imagen, enlace:s.enlace || "",
+                                   activo:s.activo !== false, fijo:s.fijo === true}))
+  }, null, 2);
+}
+
+document.getElementById("nuevoSpon").addEventListener("click", () => {
+  spons.unshift({nombre:"", imagen:"", enlace:"", activo:true, fijo:false});
+  pintarSpon(); marcarSpon(); window.scrollTo({top:0, behavior:"smooth"});
+});
+
+document.getElementById("cargarSpon").addEventListener("click", async () => {
+  try{
+    const r = await fetch("sponsors.json?v=" + Date.now(), {cache:"no-store"});
+    const d = await r.json();
+    spons = d.sponsors || [];
+    document.getElementById("rotacion").value = d.rotacion || 7;
+    pintarSpon(); marcarSpon();
+  }catch(e){ estado.textContent = "No se pudo leer sponsors.json desde este servidor."; }
+});
+
+document.getElementById("limpiarSpon").addEventListener("click", () => {
+  if(confirm("\u00bfBorrar todos los auspiciantes del panel?")){ spons = []; pintarSpon(); marcarSpon(); }
+});
+
+try{
+  const g = localStorage.getItem("creciendo_sponsors");
+  if(g) spons = JSON.parse(g);
+}catch(e){}
+pintarSpon();
+
+/* ==========================================================================
+   FARMACIAS DE TURNO
+   Se carga pegando texto plano: treinta formularios sería inusable.
+   ========================================================================== */
+const MESES_N = ["enero","febrero","marzo","abril","mayo","junio","julio",
+                 "agosto","septiembre","octubre","noviembre","diciembre"];
+const farmTexto = document.getElementById("farmTexto");
+const farmCheck = document.getElementById("farmCheck");
+
+MESES_N.forEach((m,i) => {
+  const o = document.createElement("option");
+  o.value = i + 1; o.textContent = m.charAt(0).toUpperCase() + m.slice(1);
+  document.getElementById("farmMes").appendChild(o);
+});
+(function(){
+  const hoy = new Date();
+  document.getElementById("farmMes").value = hoy.getMonth() + 1;
+  document.getElementById("farmAnio").value = hoy.getFullYear();
+  document.getElementById("farmHora").value = "08:30";
+})();
+
+function parsearFarmacias(){
+  const dias = [];
+  const fallas = [];
+  farmTexto.value.split("\n").forEach((linea, n) => {
+    const t = linea.trim();
+    if(!t) return;
+    const corte = t.indexOf(":");
+    if(corte < 1){ fallas.push("línea " + (n+1) + ": falta el día y los dos puntos"); return; }
+    const dia = parseInt(t.slice(0, corte), 10);
+    if(!dia || dia < 1 || dia > 31){ fallas.push("línea " + (n+1) + ": el día no es válido"); return; }
+    const farmacias = t.slice(corte + 1).split("/").map(p => {
+      const g = p.lastIndexOf("-");
+      if(g < 0) return {nombre: p.trim(), direccion: ""};
+      return {nombre: p.slice(0, g).trim(), direccion: p.slice(g + 1).trim()};
+    }).filter(f => f.nombre);
+    if(!farmacias.length){ fallas.push("línea " + (n+1) + ": no se entendió ninguna farmacia"); return; }
+    if(farmacias.some(f => !f.direccion)) fallas.push("día " + dia + ": hay una farmacia sin dirección");
+    dias.push({dia, farmacias});
+  });
+  dias.sort((a,b) => a.dia - b.dia);
+  return {dias, fallas};
+}
+
+function revisarFarmacias(){
+  const {dias, fallas} = parsearFarmacias();
+  const mes  = Number(document.getElementById("farmMes").value);
+  const anio = Number(document.getElementById("farmAnio").value);
+  const largo = new Date(anio, mes, 0).getDate();
+  const faltan = [];
+  for(let i = 1; i <= largo; i++) if(!dias.some(d => d.dia === i)) faltan.push(i);
+
+  if(!dias.length){ farmCheck.textContent = ""; farmCheck.removeAttribute("data-ok"); return; }
+  const problemas = fallas.concat(faltan.length ? ["faltan los días " + faltan.join(", ")] : []);
+  farmCheck.dataset.ok = problemas.length ? "0" : "1";
+  farmCheck.textContent = problemas.length
+    ? dias.length + " días cargados — " + problemas.join(" · ")
+    : "Los " + largo + " días del mes están completos.";
+}
+
+function archivoFarm(){
+  const {dias} = parsearFarmacias();
+  const mes  = Number(document.getElementById("farmMes").value);
+  const anio = Number(document.getElementById("farmAnio").value);
+  const hora = document.getElementById("farmHora").value.trim() || "08:30";
+  return JSON.stringify({
+    ciudad:"Cipolletti", mes, anio, mesNombre: MESES_N[mes-1], horaInicio: hora,
+    nota:"El turno comienza a las " + hora + " y termina a las " + hora + " del día siguiente.",
+    dias
+  }, null, 2);
+}
+
+document.getElementById("cargarFarm").addEventListener("click", async () => {
+  try{
+    const r = await fetch("farmacias.json?v=" + Date.now(), {cache:"no-store"});
+    const d = await r.json();
+    document.getElementById("farmMes").value  = d.mes;
+    document.getElementById("farmAnio").value = d.anio;
+    document.getElementById("farmHora").value = d.horaInicio || "08:30";
+    farmTexto.value = (d.dias || []).map(x =>
+      x.dia + ": " + x.farmacias.map(f => f.nombre + " - " + f.direccion).join(" / ")
+    ).join("\n");
+    revisarFarmacias();
+  }catch(e){ estado.textContent = "No se pudo leer farmacias.json desde este servidor."; }
+});
+
+document.getElementById("limpiarFarm").addEventListener("click", () => {
+  if(confirm("¿Vaciar el cronograma del panel?")){ farmTexto.value = ""; revisarFarmacias(); }
+});
+
+farmTexto.addEventListener("input", () => {
+  revisarFarmacias();
+  try{ localStorage.setItem("creciendo_farmacias", farmTexto.value); }catch(e){}
+});
+document.getElementById("farmMes").addEventListener("change", revisarFarmacias);
+document.getElementById("farmAnio").addEventListener("input", revisarFarmacias);
+
+try{
+  const g = localStorage.getItem("creciendo_farmacias");
+  if(g){ farmTexto.value = g; revisarFarmacias(); }
+}catch(e){}
+
+</script>
+</body>
+</html>

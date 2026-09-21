@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Radio Creciendo 102.1 · Cipolletti</title>
+<meta name="description" content="FM Creciendo 102.1 MHz, la primera FM de Cipolletti desde 1989. Tu frecuencia positiva. Escuchá en vivo y leé los títulos del día del Alto Valle, Neuquén, Bariloche y el país.">
+<meta name="theme-color" content="#100C1B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="Radio Creciendo 102.1 · Cipolletti">
+<meta property="og:description" content="Tu frecuencia positiva. La primera FM de Cipolletti, desde 1989. En vivo las 24 horas y los títulos del día.">
+<meta property="og:image" content="img/og.jpg">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#100C1B;
+  --ciruela:#340634;
+  --magenta:#851B80;
+  --senal:#048F3F;
+  --papel:#FAF6F9;
+  --tinta:#241B27;
+  --gris:#6B5E6D;
+  --linea:#E9DFE7;
+  --tarjeta:#FFFFFF;
+  --sombra:rgba(16,12,27,.14);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --papel:#16101C; --tinta:#F3ECF2; --gris:#A08FA6;
+    --linea:#2D2336; --tarjeta:#1C1524; --sombra:rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --papel:#16101C; --tinta:#F3ECF2; --gris:#A08FA6;
+  --linea:#2D2336; --tarjeta:#1C1524; --sombra:rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:17px;
+  line-height:1.5;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
+}
+:focus-visible{outline:3px solid var(--senal);outline-offset:3px;border-radius:4px}
+
+/* ---------- Cabecera: el momento al aire ---------- */
+.aire{
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--magenta) 0%, var(--ciruela) 46%, var(--noche) 100%);
+  color:#fff;
+  padding:calc(30px + env(safe-area-inset-top)) 20px 34px;
+  text-align:center;
+}
+.aire__marca{width:min(304px,74vw);height:auto;display:block;margin:0 auto}
+.aire__dial{
+  margin:14px 0 26px;
+  font-size:.86rem;
+  font-weight:500;
+  letter-spacing:.055em;
+  color:rgba(255,255,255,.78);
+}
+.aire__dial b{font-weight:800;color:#fff;letter-spacing:.02em}
+
+.play{
+  -webkit-appearance:none;appearance:none;
+  display:inline-flex;align-items:center;gap:15px;
+  padding:15px 30px 15px 17px;
+  border:0;border-radius:999px;
+  background:var(--senal);
+  color:#fff;
+  font-family:inherit;font-size:1.06rem;font-weight:800;letter-spacing:.005em;
+  cursor:pointer;
+  box-shadow:0 10px 28px rgba(4,143,63,.42);
+  transition:transform .12s ease, box-shadow .2s ease, background .2s ease;
+}
+.play:hover{transform:translateY(-1px)}
+.play:active{transform:translateY(1px);box-shadow:0 5px 16px rgba(4,143,63,.4)}
+.play[data-estado="cargando"]{background:#6B5E6D;box-shadow:none;cursor:progress}
+.play[data-estado="aire"]{background:#fff;color:var(--noche);box-shadow:0 10px 28px rgba(0,0,0,.3)}
+.play[data-estado="error"]{background:#8E2230;box-shadow:none}
+.play__ico{
+  width:38px;height:38px;flex:none;border-radius:50%;
+  background:rgba(255,255,255,.2);
+  display:grid;place-items:center;
+}
+.play[data-estado="aire"] .play__ico{background:rgba(16,12,27,.1)}
+.play__ico svg{width:17px;height:17px;fill:currentColor;display:block}
+.aire__nota{
+  margin:18px auto 0;max-width:30ch;
+  font-size:.8rem;line-height:1.45;color:rgba(255,255,255,.62);
+}
+.aire__mail{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-top:13px;
+  color:rgba(255,255,255,.88);
+  font-size:.85rem;font-weight:600;
+  text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,.28);
+  padding-bottom:2px;
+}
+.aire__mail:hover{border-bottom-color:var(--senal);color:#fff}
+.aire__mail svg{width:15px;height:15px;fill:var(--senal);flex:none}
+
+/* onda: sólo se mueve cuando hay audio */
+.onda{display:inline-flex;align-items:flex-end;gap:3px;height:16px}
+.onda i{width:3px;height:5px;background:currentColor;border-radius:2px;display:block}
+.play[data-estado="aire"] .onda i{animation:latir .9s ease-in-out infinite}
+.play[data-estado="aire"] .onda i:nth-child(2){animation-delay:.14s}
+.play[data-estado="aire"] .onda i:nth-child(3){animation-delay:.3s}
+.play[data-estado="aire"] .onda i:nth-child(4){animation-delay:.46s}
+@keyframes latir{0%,100%{height:5px}50%{height:16px}}
+
+/* ---------- Filtros ---------- */
+.filtros{
+  position:sticky;top:0;z-index:20;
+  background:var(--papel);
+  border-bottom:1px solid var(--linea);
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.filtros::-webkit-scrollbar{display:none}
+.filtros__fila{display:flex;gap:8px;padding:12px 18px;width:max-content;min-width:100%}
+.chip{
+  -webkit-appearance:none;appearance:none;
+  border:1px solid var(--linea);
+  background:transparent;color:var(--gris);
+  font-family:inherit;font-size:.88rem;font-weight:600;
+  padding:7px 15px;border-radius:999px;white-space:nowrap;cursor:pointer;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.chip:hover{color:var(--tinta)}
+.chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--papel)}
+
+/* ---------- Pauta ---------- */
+.pauta{max-width:660px;margin:0 auto;padding:0 18px}
+.dia{
+  display:flex;align-items:center;gap:12px;
+  padding:26px 0 10px;
+  font-size:.82rem;font-weight:700;color:var(--gris);
+}
+.dia::after{content:"";flex:1;height:1px;background:var(--linea)}
+
+.nota{
+  display:grid;
+  grid-template-columns:52px 1fr;
+  gap:0 14px;
+  padding:17px 0;
+  border-bottom:1px solid var(--linea);
+  cursor:pointer;
+}
+.nota__hora{
+  font-variant-numeric:tabular-nums;
+  font-size:.8rem;font-weight:700;color:var(--gris);
+  padding-top:3px;
+}
+.nota__meta{
+  display:flex;align-items:center;gap:7px;
+  font-size:.78rem;font-weight:600;color:var(--gris);
+  margin-bottom:3px;
+}
+.nota__punto{width:7px;height:7px;border-radius:50%;background:var(--senal);flex:none}
+.nota__titulo{
+  margin:0 0 6px;
+  font-size:1.16rem;font-weight:800;line-height:1.24;
+  letter-spacing:-.015em;
+  color:var(--tinta);
+  text-wrap:balance;
+}
+.nota__cuerpo{
+  margin:0;
+  font-size:.95rem;line-height:1.5;color:var(--gris);
+  max-width:62ch;
+  display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
+}
+.nota[aria-expanded="true"] .nota__cuerpo{-webkit-line-clamp:unset;overflow:visible}
+.nota__mas{
+  grid-column:2;
+  margin-top:7px;
+  font-size:.82rem;font-weight:700;color:var(--magenta);
+}
+.nota[aria-expanded="true"] .nota__mas{visibility:hidden;height:0;margin:0}
+
+.vacio{padding:56px 0 70px;text-align:center;color:var(--gris);font-size:.95rem}
+.vacio b{display:block;color:var(--tinta);font-size:1.05rem;margin-bottom:6px}
+
+/* ---------- Barra fija del reproductor ---------- */
+.barra{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:var(--noche);
+  color:#fff;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:13px;
+  box-shadow:0 -6px 24px var(--sombra);
+  transform:translateY(105%);
+  transition:transform .28s cubic-bezier(.2,.7,.3,1);
+}
+.barra[data-visible="1"]{transform:translateY(0)}
+.barra__btn{
+  -webkit-appearance:none;appearance:none;border:0;
+  width:46px;height:46px;flex:none;border-radius:50%;
+  background:var(--senal);color:#fff;
+  display:grid;place-items:center;cursor:pointer;
+}
+.barra__btn[data-estado="aire"]{background:#fff;color:var(--noche)}
+.barra__btn[data-estado="cargando"]{background:#4A3F52}
+.barra__btn svg{width:16px;height:16px;fill:currentColor}
+.barra__txt{min-width:0;flex:1}
+.barra__t1{font-size:.95rem;font-weight:800;line-height:1.2}
+.barra__t2{font-size:.76rem;color:rgba(255,255,255,.6);line-height:1.3;margin-top:1px}
+.barra__vol{width:90px;accent-color:var(--senal)}
+@media (max-width:520px){.barra__vol{display:none}}
+@media (min-width:661px){
+  .barra{left:50%;right:auto;bottom:18px;transform:translate(-50%,160%);width:620px;border-radius:16px;padding:11px 16px}
+  .barra[data-visible="1"]{transform:translate(-50%,0)}
+}
+
+/* ---------- Pie ---------- */
+.pie{
+  max-width:660px;margin:34px auto 0;padding:26px 18px 40px;
+  border-top:1px solid var(--linea);
+  font-size:.86rem;color:var(--gris);line-height:1.6;
+}
+.pie a{color:var(--magenta);font-weight:600}
+.pie p{margin:0 0 5px}
+.pie__marca{font-weight:800;color:var(--tinta);font-size:1.05rem;letter-spacing:-.01em}
+.pie__lema{color:var(--magenta);font-weight:600;font-size:.95rem}
+.pie__historia{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin:14px 0 16px;padding-top:14px;
+  border-top:1px solid var(--linea);
+  font-weight:600;color:var(--tinta);
+}
+.pie__anio{
+  display:inline-flex;align-items:center;gap:7px;
+  font-variant-numeric:tabular-nums;font-weight:800;color:var(--senal);
+}
+.pie__anio::before{content:"";width:16px;height:2px;background:var(--senal);border-radius:2px}
+.pie__contacto{margin:12px 0 14px}
+.pie__contacto a{font-size:1rem;font-weight:700}
+
+
+
+/* ---------- Zócalo de auspiciantes ----------
+   El arte se sube siempre en 1920x400 y la página lo escala sola. */
+:root{ --zocalo-prop: 1920 / 400; }
+
+.zocalo{
+  background:var(--tarjeta);
+  border-bottom:1px solid var(--linea);
+  padding:14px 0 12px;
+}
+.zocalo__caja{max-width:1920px;margin:0 auto}
+.zocalo__rotulo{
+  max-width:660px;margin:0 auto 9px;padding:0 18px;
+  font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--gris);
+}
+.zocalo__marco{
+  position:relative;
+  width:100%;
+  aspect-ratio:var(--zocalo-prop);
+  background:var(--linea);
+  overflow:hidden;
+}
+.zocalo__pieza{
+  position:absolute;inset:0;
+  display:block;width:100%;height:100%;
+  opacity:0;
+  transition:opacity .6s ease;
+}
+.zocalo__pieza[data-ver="1"]{opacity:1}
+.zocalo__pieza img{width:100%;height:100%;object-fit:cover;display:block}
+.zocalo__puntos{
+  display:flex;justify-content:center;gap:7px;
+  padding:10px 18px 0;
+}
+.zocalo__punto{
+  -webkit-appearance:none;appearance:none;border:0;padding:0;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--linea);cursor:pointer;
+  transition:background .2s ease,width .2s ease;
+}
+.zocalo__punto[aria-selected="true"]{background:var(--senal);width:20px;border-radius:4px}
+.zocalo__puntos:has(.zocalo__punto:only-child){display:none}
+
+@media (min-width:661px){
+  .zocalo__rotulo{max-width:1920px}
+}
+
+
+/* ---------- Franja de farmacia de turno ---------- */
+.turno{
+  -webkit-appearance:none;appearance:none;
+  display:flex;align-items:center;gap:13px;
+  width:100%;max-width:100%;
+  text-align:left;
+  border:0;border-bottom:1px solid var(--linea);
+  border-left:4px solid var(--senal);
+  background:var(--tarjeta);
+  padding:14px 16px;
+  font-family:inherit;color:var(--tinta);
+  cursor:pointer;
+}
+.turno:hover{background:var(--papel)}
+.turno__cruz{
+  width:38px;height:38px;flex:none;border-radius:10px;
+  background:var(--senal);color:#fff;display:grid;place-items:center;
+}
+.turno__cruz svg{width:18px;height:18px;fill:currentColor}
+.turno__cuerpo{min-width:0;flex:1;display:block}
+.turno__rotulo{
+  display:block;
+  font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--senal);margin-bottom:2px;
+}
+.turno__nombres{display:block;font-size:1.02rem;font-weight:800;line-height:1.25;letter-spacing:-.01em}
+.turno__dirs{display:block;font-size:.84rem;color:var(--gris);line-height:1.35;margin-top:2px}
+.turno__flecha{flex:none;color:var(--gris)}
+.turno__flecha svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Mes de farmacias ---------- */
+.farm__aviso{
+  background:var(--tarjeta);border:1px solid var(--linea);border-radius:11px;
+  padding:13px 15px;margin:18px 0 6px;
+  font-size:.86rem;color:var(--gris);line-height:1.5;
+}
+.farm__aviso b{color:var(--tinta)}
+.farm{
+  display:grid;grid-template-columns:52px 1fr;gap:0 14px;
+  padding:14px 0;border-bottom:1px solid var(--linea);
+}
+.farm[data-hoy="1"]{
+  background:linear-gradient(90deg, rgba(4,143,63,.09), transparent 60%);
+  border-bottom-color:var(--senal);
+}
+.farm__dia{display:flex;flex-direction:column;align-items:flex-start;padding-top:2px}
+.farm__num{font-size:1.32rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.farm[data-hoy="1"] .farm__num{color:var(--senal)}
+.farm__sem{font-size:.68rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.farm__hoy{
+  display:inline-block;margin-top:5px;
+  background:var(--senal);color:#fff;
+  font-size:.62rem;font-weight:800;letter-spacing:.06em;
+  padding:2px 6px;border-radius:4px;
+}
+.farm__uno{display:block;margin-bottom:5px}
+.farm__uno:last-child{margin-bottom:0}
+.farm__nom{font-size:1rem;font-weight:700;line-height:1.3}
+.farm__dir{
+  font-size:.86rem;color:var(--gris);text-decoration:none;
+  border-bottom:1px solid var(--linea);
+}
+.farm__dir:hover{color:var(--senal);border-bottom-color:var(--senal)}
+
+/* ---------- Selector de vistas ---------- */
+.modos{
+  position:sticky;top:0;z-index:25;
+  background:var(--papel);
+  padding:13px 18px 11px;
+}
+.modos__caja{
+  display:flex;gap:4px;
+  max-width:624px;margin:0 auto;
+  background:var(--linea);
+  padding:4px;border-radius:999px;
+}
+.modo{
+  -webkit-appearance:none;appearance:none;border:0;
+  flex:1;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px 12px;border-radius:999px;
+  background:transparent;color:var(--gris);
+  font-family:inherit;font-size:.9rem;font-weight:700;
+  cursor:pointer;
+  transition:background .18s ease,color .18s ease;
+}
+.modo svg{width:15px;height:15px;fill:currentColor}
+.modo[aria-selected="true"]{background:var(--tarjeta);color:var(--tinta);box-shadow:0 1px 4px var(--sombra)}
+.filtros{top:64px}
+
+/* ---------- Episodios ---------- */
+.epi{
+  display:grid;
+  grid-template-columns:50px 1fr;
+  gap:0 14px;
+  padding:18px 0;
+  border-bottom:1px solid var(--linea);
+}
+.epi__play{
+  -webkit-appearance:none;appearance:none;
+  width:44px;height:44px;border-radius:50%;
+  border:2px solid var(--senal);background:transparent;color:var(--senal);
+  display:grid;place-items:center;cursor:pointer;
+  transition:background .15s ease,color .15s ease;
+}
+.epi__play svg{width:15px;height:15px;fill:currentColor}
+.epi__play:hover,.epi[data-sonando="1"] .epi__play{background:var(--senal);color:#fff}
+.epi__meta{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  font-size:.78rem;font-weight:600;color:var(--gris);margin-bottom:3px;
+}
+.epi__dur{font-variant-numeric:tabular-nums;color:var(--senal);font-weight:700}
+.epi__titulo{margin:0 0 6px;font-size:1.13rem;font-weight:800;line-height:1.25;letter-spacing:-.015em;text-wrap:balance}
+.epi__desc{margin:0;font-size:.94rem;line-height:1.5;color:var(--gris);max-width:62ch}
+.epi__prog{
+  grid-column:2;margin-top:11px;height:4px;border-radius:3px;
+  background:var(--linea);overflow:hidden;display:none;
+}
+.epi[data-sonando="1"] .epi__prog{display:block}
+.epi__prog i{display:block;height:100%;width:0;background:var(--senal);border-radius:3px}
+.epi__falta{
+  grid-column:2;margin-top:9px;
+  font-size:.8rem;color:var(--gris);font-style:italic;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="aire">
+  <img class="aire__marca" src="img/logo.png" alt="Radio Creciendo" width="900" height="264">
+  <p class="aire__dial"><b>102.1 MHz</b> &nbsp;Cipolletti, Río Negro</p>
+
+  <button class="play" id="play" data-estado="pausa" aria-live="polite">
+    <span class="play__ico" id="playIco" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </span>
+    <span id="playTxt">Escuchar en vivo</span>
+  </button>
+
+  <p class="aire__nota" id="aireNota">Transmitimos las 24 horas desde el Alto Valle.</p>
+  <a class="aire__mail" href="mailto:radiocreciendo@gmail.com">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.2-8 5-8-5V6l8 5 8-5z"/></svg>
+    radiocreciendo@gmail.com
+  </a>
+</header>
+
+<aside class="zocalo" id="zocalo" hidden aria-label="Publicidad">
+  <div class="zocalo__caja">
+    <p class="zocalo__rotulo">Auspician</p>
+    <div class="zocalo__marco" id="zocaloMarco"></div>
+    <div class="zocalo__puntos" id="zocaloPuntos" role="tablist" aria-label="Elegir auspiciante"></div>
+  </div>
+</aside>
+
+<button class="turno" id="turno" hidden>
+  <span class="turno__cruz" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z"/></svg>
+  </span>
+  <span class="turno__cuerpo">
+    <span class="turno__rotulo" id="turnoRotulo">Farmacia de turno</span>
+    <span class="turno__nombres" id="turnoNombres"></span>
+    <span class="turno__dirs" id="turnoDirs"></span>
+  </span>
+  <span class="turno__flecha" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+  </span>
+</button>
+
+<nav class="modos" aria-label="Elegir qué ver">
+  <div class="modos__caja">
+    <button class="modo" id="modoNotas" aria-selected="true">Notas</button>
+    <button class="modo" id="modoPod" aria-selected="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7v4H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h3V9a5 5 0 0 1 10 0v10h3a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-1V9a7 7 0 0 0-7-7z"/></svg>
+      Podcasts
+    </button>
+    <button class="modo" id="modoFarm" aria-selected="false">Farmacias</button>
+  </div>
+</nav>
+
+<nav class="filtros" id="filtros" aria-label="Filtrar por sección">
+  <div class="filtros__fila" id="chips"></div>
+</nav>
+
+<main class="pauta" id="pauta"></main>
+<section class="pauta" id="episodios" hidden aria-label="Episodios del podcast"></section>
+<section class="pauta" id="farmacias" hidden aria-label="Farmacias de turno del mes"></section>
+
+<footer class="pie">
+  <p class="pie__marca">FM Creciendo 102.1 MHz</p>
+  <p class="pie__lema">“Tu frecuencia positiva”</p>
+  <p class="pie__historia">Primer FM de la ciudad de Cipolletti<span class="pie__anio">Año 1989</span></p>
+  <p>Cipolletti, Río Negro, Patagonia argentina.</p>
+  <p class="pie__contacto">Mandanos tu dato al aire:<br>
+  <a href="mailto:radiocreciendo@gmail.com">radiocreciendo@gmail.com</a></p>
+  <p><a href="https://radiocreciendo.com">radiocreciendo.com</a></p>
+</footer>
+
+<div class="barra" id="barra" data-visible="0">
+  <button class="barra__btn" id="barraBtn" data-estado="pausa" aria-label="Escuchar en vivo">
+    <svg viewBox="0 0 24 24" id="barraIco"><path d="M8 5v14l11-7z"/></svg>
+  </button>
+  <div class="barra__txt">
+    <div class="barra__t1">Radio Creciendo 102.1</div>
+    <div class="barra__t2" id="barraEstado">En vivo desde Cipolletti</div>
+  </div>
+  <input class="barra__vol" id="vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volumen">
+</div>
+
+<!-- Sin el atributo crossorigin a proposito: los servidores Shoutcast no
+     mandan cabeceras CORS y, con ese atributo puesto, el navegador rechaza
+     el audio aunque la URL este bien. Para reproducir un stream no hace falta. -->
+<audio id="audio" preload="none"></audio>
+<audio id="audioPod" preload="none"></audio>
+
+<!-- Copia de respaldo de las farmacias -->
+<script type="application/json" id="farmLocal">
+{"ciudad":"Cipolletti","mes":9,"anio":2026,"mesNombre":"septiembre","horaInicio":"08:30","nota":"El turno comienza a las 08:30 y termina a las 08:30 del día siguiente.","dias":[{"dia":1,"farmacias":[{"nombre":"Norte","direccion":"La Esmeralda 1604"},{"nombre":"Del Centro","direccion":"Roca 607"}]},{"dia":2,"farmacias":[{"nombre":"Limay","direccion":"San Martín 702"},{"nombre":"Cruz del Sur","direccion":"Alem 1899"}]},{"dia":3,"farmacias":[{"nombre":"San Martín","direccion":"Alem 325"},{"nombre":"Arévalo","direccion":"Rivadavia 506"}]},{"dia":4,"farmacias":[{"nombre":"Tarico","direccion":"Don Bosco y Bolivia"},{"nombre":"Del Barrio","direccion":"Esquiú y Primeros Pobladores"}]},{"dia":5,"farmacias":[{"nombre":"Del Pueblo","direccion":"España 252"}]},{"dia":6,"farmacias":[{"nombre":"Seratti","direccion":"9 de Julio 690"},{"nombre":"Saturnino","direccion":"Saturnino Franco 3254"}]},{"dia":7,"farmacias":[{"nombre":"Cruz del Sur","direccion":"Alem 1899"},{"nombre":"Martínez","direccion":"M. Moreno 151"}]},{"dia":8,"farmacias":[{"nombre":"Aguilera","direccion":"Brentana 449"},{"nombre":"Argentina","direccion":"Alem 1350"}]},{"dia":9,"farmacias":[{"nombre":"Apothekaria","direccion":"Kennedy 245"},{"nombre":"Fernández","direccion":"Villegas 86"}]},{"dia":10,"farmacias":[{"nombre":"Martín","direccion":"9 de Julio 429"}]},{"dia":11,"farmacias":[{"nombre":"Avenida","direccion":"Alem 802"},{"nombre":"Pasteur","direccion":"25 de Mayo 475"}]},{"dia":12,"farmacias":[{"nombre":"Maturi","direccion":"San Martín 459"},{"nombre":"Mengelle","direccion":"Mengelle 1263"}]},{"dia":13,"farmacias":[{"nombre":"San Pablo","direccion":"Irigoyen 1064"},{"nombre":"Del Sol","direccion":"Mengelle 224"}]},{"dia":14,"farmacias":[{"nombre":"Cipolletti","direccion":"Mengelle 835"},{"nombre":"Gazzola","direccion":"Alem 565"}]},{"dia":15,"farmacias":[{"nombre":"La Botica","direccion":"Toschi 421"},{"nombre":"Austral","direccion":"Mengelle 1907"}]},{"dia":16,"farmacias":[{"nombre":"Norte","direccion":"La Esmeralda 1604"},{"nombre":"Del Centro","direccion":"Roca 607"}]},{"dia":17,"farmacias":[{"nombre":"Limay","direccion":"San Martín 702"},{"nombre":"Cruz del Sur","direccion":"Alem 1899"}]},{"dia":18,"farmacias":[{"nombre":"San Martín","direccion":"Alem 325"},{"nombre":"Arévalo","direccion":"Rivadavia 506"}]},{"dia":19,"farmacias":[{"nombre":"Tarico","direccion":"Don Bosco y Bolivia"},{"nombre":"Del Barrio","direccion":"Esquiú y Primeros Pobladores"}]},{"dia":20,"farmacias":[{"nombre":"Del Pueblo","direccion":"España 252"}]},{"dia":21,"farmacias":[{"nombre":"Seratti","direccion":"9 de Julio 690"},{"nombre":"Saturnino","direccion":"Saturnino Franco 3254"}]},{"dia":22,"farmacias":[{"nombre":"Cruz del Sur","direccion":"Alem 1899"},{"nombre":"Martínez","direccion":"M. Moreno 151"}]},{"dia":23,"farmacias":[{"nombre":"Aguilera","direccion":"Brentana 449"},{"nombre":"Argentina","direccion":"Alem 1350"}]},{"dia":24,"farmacias":[{"nombre":"Apothekaria","direccion":"Kennedy 245"},{"nombre":"Fernández","direccion":"Villegas 86"}]},{"dia":25,"farmacias":[{"nombre":"Martín","direccion":"9 de Julio 429"}]},{"dia":26,"farmacias":[{"nombre":"Avenida","direccion":"Alem 802"},{"nombre":"Pasteur","direccion":"25 de Mayo 475"}]},{"dia":27,"farmacias":[{"nombre":"Maturi","direccion":"San Martín 459"},{"nombre":"Mengelle","direccion":"Mengelle 1263"}]},{"dia":28,"farmacias":[{"nombre":"San Pablo","direccion":"Irigoyen 1064"},{"nombre":"Del Sol","direccion":"Mengelle 224"}]},{"dia":29,"farmacias":[{"nombre":"Cipolletti","direccion":"Mengelle 835"},{"nombre":"Gazzola","direccion":"Alem 565"}]},{"dia":30,"farmacias":[{"nombre":"La Botica","direccion":"Toschi 421"},{"nombre":"Austral","direccion":"Mengelle 1907"}]}]}
+</script>
+
+<!-- Copia de respaldo de los auspiciantes -->
+<script type="application/json" id="sponLocal">
+{
+"rotacion": 7,
+"sponsors": [
+{
+"id": "s01",
+"nombre": "Supermercados La Anónima",
+"imagen": "img/sponsors/la-anonima.jpg",
+"enlace": "",
+"activo": true,
+"fijo": true
+},
+{
+"id": "s02",
+"nombre": "Ferretería El Valle",
+"imagen": "img/sponsors/demo-1.jpg",
+"enlace": "https://wa.me/5492994128800",
+"activo": true,
+"fijo": false
+},
+{
+"id": "s03",
+"nombre": "Panadería La Espiga",
+"imagen": "img/sponsors/demo-2.jpg",
+"enlace": "",
+"activo": true,
+"fijo": false
+},
+{
+"id": "s04",
+"nombre": "Cooperativa Agrícola Cipolletti",
+"imagen": "img/sponsors/demo-3.jpg",
+"enlace": "",
+"activo": true,
+"fijo": false
+}
+]
+}
+</script>
+
+<!-- Copia de respaldo de los episodios -->
+<script type="application/json" id="podLocal">
+{
+"episodios": [
+{
+"id": "e00",
+"cat": "general",
+"fecha": "2026-09-15T20:30:00-03:00",
+"titulo": "Cortina de prueba — para verificar el reproductor",
+"descripcion": "Audio de prueba de 14 segundos. Sirve para confirmar que el reproductor de episodios funciona en el servidor antes de subir contenido real. Borralo cuando cargues el primer episodio de verdad.",
+"audio": "podcasts/cortina-demo.mp3",
+"duracion": 14
+},
+{
+"id": "e01",
+"cat": "actualidad",
+"fecha": "2026-09-15T11:00:00-03:00",
+"titulo": "Qué se discute en las jornadas del metano en Neuquén",
+"descripcion": "Resumen de las dos jornadas del encuentro Vaca Muerta Metano Near Zero: qué se mide, quiénes controlan y por qué le importa al Alto Valle.",
+"audio": "podcasts/2026-09-15-metano.mp3",
+"duracion": 258
+},
+{
+"id": "e02",
+"cat": "deportes",
+"fecha": "2026-09-14T19:30:00-03:00",
+"titulo": "La previa del debut de la Sub 19 en Rosario",
+"descripcion": "Cómo llega el plantel juvenil al estreno del viernes, quiénes son los nombres a seguir y qué necesita para pasar de zona.",
+"audio": "podcasts/2026-09-14-sub19.mp3",
+"duracion": 214
+},
+{
+"id": "e03",
+"cat": "cultura",
+"fecha": "2026-09-14T10:00:00-03:00",
+"titulo": "Cipolletti, 1989: la ciudad cuando nació la primera FM",
+"descripcion": "Un recorrido corto por cómo era el dial del Alto Valle antes de que Creciendo saliera al aire, con testimonios de quienes estuvieron en aquel primer día.",
+"audio": "podcasts/2026-09-14-1989.mp3",
+"duracion": 295
+}
+]
+}
+</script>
+
+<!-- Copia de respaldo del feed: si noticias.json no carga, se usa esto -->
+<script type="application/json" id="feedLocal">
+{
+"notas": [
+{
+"id": "n01",
+"cat": "altovalle",
+"hora": "2026-09-16T09:15:00-03:00",
+"region": true,
+"titulo": "Avanza la limpieza del Ex Canal Roca para despejar el desagüe pluvial",
+"cuerpo": "El Municipio trabaja en el despeje del Ex Canal Roca para dejar libre el paso a la maquinaria del Consorcio de Riego. La idea es que después puedan hacer el mantenimiento del desagüe pluvial sin obstáculos en el camino. El tramo abarca 440 metros lineales, desde calle J. Salto hasta los Manzanos. La tarea está a cargo de la Secretaría de Obras Públicas."
+},
+{
+"id": "n02",
+"cat": "economia",
+"hora": "2026-09-15T12:33:00-03:00",
+"titulo": "El dólar arrancó la semana sin sobresaltos",
+"cuerpo": "El Banco Nación cotizó la divisa a 1.530 pesos, mientras el libre se movió en torno a los 1.560. El MEP quedó apenas por encima del oficial. El barril Brent se ubicó cerca de los 103 dólares y el WTI algo arriba, un dato que la región mira de cerca por su peso en las regalías. Sin cambios en el esquema cambiario por ahora."
+},
+{
+"id": "n03",
+"cat": "comunidad",
+"hora": "2026-09-15T10:30:00-03:00",
+"titulo": "Refinanciaron más de 500 mil créditos en mora en todo el país",
+"cuerpo": "Los bancos avanzaron con acuerdos privados para reestructurar préstamos personales y saldos de tarjeta. El movimiento refleja el peso que tomó el endeudamiento de las familias en el último año. En paralelo hay proyectos en el Congreso para ordenar el tema por ley. Los especialistas recomiendan revisar el CFT antes de firmar cualquier refinanciación."
+},
+{
+"id": "n04",
+"cat": "energia",
+"hora": "2026-09-15T09:00:00-03:00",
+"titulo": "Neuquén abre dos jornadas para medir el metano de Vaca Muerta",
+"cuerpo": "Arrancó en el Centro de Convenciones Domuyo el encuentro Vaca Muerta Metano Near Zero, con autoridades provinciales, empresas operadoras y organismos internacionales. La meta que se plantea la provincia es llevar las emisiones al mínimo posible antes de 2030. Mañana la actividad sigue en el Instituto Vaca Muerta con un perfil más técnico: monitoreo satelital, cámaras de detección y verificación independiente. La inscripción es gratuita y con cupo."
+},
+{
+"id": "n05",
+"cat": "eventos",
+"hora": "2026-09-15T09:00:00-03:00",
+"titulo": "Edifica Neuquén reúne hoy a toda la cadena de la construcción",
+"cuerpo": "La jornada se hace en el Hotel Grand Brizo Comahue de 9 a 17, con capacitaciones y rondas de negocios. El foco está puesto en el mercado inmobiliario que traccionan Vaca Muerta y el crecimiento de la Confluencia. Participan desarrolladoras, corralones y estudios de arquitectura de toda la región. La entrada es con inscripción previa."
+},
+{
+"id": "n06",
+"cat": "economia",
+"hora": "2026-09-15T08:20:00-03:00",
+"titulo": "El consumo de carne volvió a caer y toca mínimos históricos",
+"cuerpo": "El consumo de carne vacuna retrocedió cerca de un 10% interanual durante agosto, según los últimos datos del sector. En Neuquén y Río Negro el movimiento se sintió sobre todo en los cortes de todos los días. La combinación de precios en alza y bolsillos ajustados empujó a muchas familias a reemplazar por pollo y cerdo. Los frigoríficos compensan con exportación."
+},
+{
+"id": "n07",
+"cat": "altovalle",
+"hora": "2026-09-15T07:45:00-03:00",
+"titulo": "Cipolletti cerró el operativo oftalmológico Enfocar con buen balance",
+"cuerpo": "El programa provincial de atención de la vista terminó su paso por la ciudad y dejó cientos de controles hechos en los barrios. Quienes necesitaban anteojos recetados los reciben sin costo a través del sistema público. En paralelo, el Municipio sigue con la campaña de adopción de mascotas junto a la Fundación para el Bienestar Animal. Los turnos se piden por la web municipal."
+},
+{
+"id": "n08",
+"cat": "nacional",
+"hora": "2026-09-15T07:10:00-03:00",
+"titulo": "El Gobierno analiza feriados por la visita del papa León XIV",
+"cuerpo": "El Vaticano confirmó que el Pontífice estará en el país entre el 8 y el 11 de noviembre. Casa Rosada evalúa declarar asueto o feriado en las jurisdicciones que recorra la comitiva, lo que podría armar un fin de semana largo. La agenda incluiría Luján entre los destinos. Todavía no hay decreto firmado ni confirmación oficial del cronograma."
+},
+{
+"id": "n09",
+"cat": "deportes",
+"hora": "2026-09-15T06:50:00-03:00",
+"titulo": "La Sub 19 debuta el viernes en los Juegos Suramericanos",
+"cuerpo": "La Selección argentina juvenil quedó en el Grupo B junto a Paraguay, Uruguay y Venezuela. El estreno es este viernes 17 en Rosario, con transmisión abierta. El plantel viene de una gira de preparación corta pero con buenos resultados. Clasifican los dos primeros de cada zona a semifinales."
+},
+{
+"id": "n10",
+"cat": "economia",
+"hora": "2026-09-14T22:40:00-03:00",
+"titulo": "Los alimentos volvieron a empujar la inflación de septiembre",
+"cuerpo": "Las mediciones privadas de las primeras semanas muestran subas fuertes en góndola, con carnicería y verdulería a la cabeza. La presión sobre el índice general se mantiene alta pese a la desaceleración de otros rubros. En el Alto Valle el relevamiento marca diferencias de hasta el 30% entre comercios. El dato oficial se conoce a mediados del mes que viene.",
+"region": true
+},
+{
+"id": "n11",
+"cat": "internacional",
+"hora": "2026-09-14T20:05:00-03:00",
+"titulo": "La ONU pidió regular con urgencia la inteligencia artificial",
+"cuerpo": "El Alto Comisionado para los Derechos Humanos, Volker Türk, advirtió que el avance de estas tecnologías toca prácticamente todos los derechos fundamentales. Reclamó marcos regulatorios que lleguen antes que los daños, no después. Mencionó especialmente los sesgos en decisiones automatizadas y la vigilancia masiva. El planteo se suma al debate que ya está abierto en varios países."
+},
+{
+"id": "n12",
+"cat": "comunidad",
+"hora": "2026-09-14T17:23:00-03:00",
+"titulo": "Adopciones en Río Negro: buscan acortar los tiempos de espera",
+"cuerpo": "Especialistas de la provincia plantearon que el cuello de botella no está en la falta de familias sino en la duración de los procesos judiciales. La propuesta pasa por unificar criterios entre juzgados y fortalecer los equipos técnicos. Hay chicos que esperan años una resolución definitiva. El registro provincial de adoptantes sigue abierto todo el año.",
+"region": true
+},
+{
+"id": "n13",
+"cat": "nacional",
+"hora": "2026-09-14T17:19:00-03:00",
+"titulo": "Fallo en la causa Sueños Compartidos: absolvieron a De Vido",
+"cuerpo": "El tribunal resolvió la absolución del exministro de Planificación en el expediente por el manejo de fondos del plan de viviendas. Para José López y los hermanos Schoklender dictó penas en suspenso. La sentencia llegó después de un juicio que se extendió por años. Las partes ya anticiparon que van a apelar ante instancias superiores."
+},
+{
+"id": "n14",
+"cat": "deportes",
+"hora": "2026-09-14T17:14:00-03:00",
+"titulo": "El Gran Premio de Azerbaiyán se corre un sábado, algo inédito",
+"cuerpo": "La organización movió la carrera principal por un cruce de agenda con otro evento en Bakú. Es una excepción rara en el calendario de la Fórmula 1, que casi siempre define el domingo. Los horarios de clasificación también se adelantan un día. En Argentina la largada queda en plena mañana."
+},
+{
+"id": "n15",
+"cat": "neuquen",
+"hora": "2026-09-14T16:30:00-03:00",
+"titulo": "Confirman la pavimentación de la Ruta 67, clave para Vaca Muerta",
+"cuerpo": "Las máquinas ya se mueven en el trazado y la obra será la primera financiada con el fideicomiso petrolero. Va a permitir un acceso directo desde Neuquén capital hacia la zona de yacimientos. También avanza el bypass de Añelo, pensado para descomprimir el tránsito pesado. Se proyecta más obra vial en la Región Confluencia para lo que queda del año."
+},
+{
+"id": "n16",
+"cat": "bariloche",
+"hora": "2026-09-14T11:15:00-03:00",
+"titulo": "Secuestran dos cargamentos de leña extraída ilegalmente en Mallín Ahogado",
+"cuerpo": "Un operativo del destacamento de la zona interceptó los traslados y labró actas de infracción a los responsables. La extracción sin permiso es un problema recurrente en la cordillera, sobre todo antes del invierno. La leña quedó a disposición de la autoridad forestal. Desde el área ambiental recordaron que el corte requiere autorización previa."
+}
+]
+}
+</script>
+
+<script>
+/* ==========================================================================
+   1) CONFIGURACIÓN — lo único que hay que tocar para poner la radio al aire
+   ========================================================================== */
+const STREAM_URLS = [
+  "https://genexservicios.com:2000/stream/fmcreciendo"
+];
+/* Radio alojada en Genex, panel SonicPanel. Esta dirección está probada y
+   funcionando: es el proxy con SSL de SonicPanel sobre el puerto 2000.
+
+   El puerto 2000 es el del panel; el 8064 es el del servidor Shoutcast y es
+   el que se carga en el OptiCodec para transmitir, no el que escuchan los
+   oyentes. No los confundas.
+
+   Si algún día Genex cambia la configuración y el botón deja de sonar,
+   probá con test-stream.html: recorre las diez variantes posibles y te marca
+   cuál quedó activa. Se pueden agregar acá como líneas extra y el
+   reproductor las va a ir probando en orden hasta que una suene. */
+
+const CATEGORIAS = {
+  altovalle:    {nombre:"Alto Valle",    region:true},
+  neuquen:      {nombre:"Neuquén",       region:true},
+  bariloche:    {nombre:"Bariloche",     region:true},
+  energia:      {nombre:"Energía",       region:true},
+  nacional:     {nombre:"Nacional",      region:false},
+  internacional:{nombre:"Internacional", region:false},
+  deportes:     {nombre:"Deportes",      region:false},
+  economia:     {nombre:"Economía",      region:false},
+  comunidad:    {nombre:"Comunidad",     region:false},
+  eventos:      {nombre:"Eventos",       region:false}
+};
+
+const FILTROS = [
+  {id:"todo",          texto:"Todo"},
+  {id:"region",        texto:"De la región"},
+  {id:"nacional",      texto:"Nacional"},
+  {id:"internacional", texto:"Internacional"},
+  {id:"deportes",      texto:"Deportes"},
+  {id:"economia",      texto:"Economía"},
+  {id:"comunidad",     texto:"Comunidad"},
+  {id:"eventos",       texto:"Eventos"}
+];
+
+/* ==========================================================================
+   2) REPRODUCTOR
+   ========================================================================== */
+const audio    = document.getElementById("audio");
+const play     = document.getElementById("play");
+const playIco  = document.getElementById("playIco");
+const playTxt  = document.getElementById("playTxt");
+const aireNota = document.getElementById("aireNota");
+const barra    = document.getElementById("barra");
+const barraBtn = document.getElementById("barraBtn");
+const barraIco = document.getElementById("barraIco");
+const barraEstado = document.getElementById("barraEstado");
+const vol      = document.getElementById("vol");
+
+const SVG_PLAY  = '<path d="M8 5v14l11-7z"/>';
+const SVG_PAUSA = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+const SVG_ONDA  = '<i></i><i></i><i></i><i></i>';
+
+const hayStream = STREAM_URLS.length > 0;
+let urlBuena = null;   // la primera que funcione queda fijada para la sesión
+
+function conCorte(u){
+  // los Shoutcast viejos se atragantan con parámetros: sólo cachébuster
+  // en las rutas limpias
+  if(u.includes(";")) return u;
+  return u + (u.includes("?") ? "&" : "?") + "t=" + Date.now();
+}
+
+// mientras conecta no reportamos error: lo decide probarDesde
+audio.addEventListener("error", e => e.stopImmediatePropagation(), true);
+
+function pintar(estado){
+  play.dataset.estado = estado;
+  barraBtn.dataset.estado = estado;
+  if(estado === "aire"){
+    playIco.innerHTML = '<span class="onda">'+SVG_ONDA+'</span>';
+    playTxt.textContent = "En el aire";
+    barraIco.innerHTML = SVG_PAUSA;
+    barraBtn.setAttribute("aria-label","Pausar la transmisión");
+    barraEstado.textContent = "Sonando ahora";
+    const t1a = document.querySelector(".barra__t1");
+    if(t1a) t1a.textContent = "Radio Creciendo 102.1";
+  } else if(estado === "cargando"){
+    playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
+    playTxt.textContent = "Conectando…";
+    barraEstado.textContent = "Conectando con la emisora…";
+  } else if(estado === "error"){
+    playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
+    playTxt.textContent = "Reintentar";
+    barraIco.innerHTML = SVG_PLAY;
+    barraEstado.textContent = "Se cortó la señal. Tocá para reconectar.";
+    aireNota.textContent = "No pudimos conectar con la emisora. Probá de nuevo en un momento.";
+  } else {
+    playIco.innerHTML = '<svg viewBox="0 0 24 24">'+SVG_PLAY+'</svg>';
+    playTxt.textContent = "Escuchar en vivo";
+    barraIco.innerHTML = SVG_PLAY;
+    barraBtn.setAttribute("aria-label","Escuchar en vivo");
+    barraEstado.textContent = "En vivo desde Cipolletti";
+    const t1p = document.querySelector(".barra__t1");
+    if(t1p) t1p.textContent = "Radio Creciendo 102.1";
+  }
+}
+
+/* Prueba las direcciones una por una. La que arranque queda guardada en
+   urlBuena y las siguientes veces va derecho a esa.
+
+   Cada intento lleva un número: si el oyente vuelve a tocar el botón, el
+   intento anterior queda huérfano y se descarta solo, para que no termine
+   pisando el estado del nuevo. Y si una variante no arranca en 8 segundos
+   se la da por muerta y se pasa a la siguiente, así el botón nunca queda
+   colgado en "Conectando". */
+let intentoId = 0;
+const ESPERA = 8000;
+
+function probarDesde(lista, i, mio){
+  if(mio !== intentoId) return;
+  if(i >= lista.length){ urlBuena = null; pintar("error"); return; }
+
+  const u = lista[i];
+  let resuelto = false;
+  const seguir = () => {
+    if(resuelto || mio !== intentoId) return;
+    resuelto = true;
+    probarDesde(lista, i + 1, mio);
+  };
+
+  const reloj = setTimeout(seguir, ESPERA);
+  audio.src = conCorte(u);
+  audio.load();
+  audio.play()
+    .then(() => {
+      clearTimeout(reloj);
+      if(mio !== intentoId){ audio.pause(); return; }
+      resuelto = true;
+      urlBuena = u;
+    })
+    .catch(() => { clearTimeout(reloj); seguir(); });
+}
+
+function alternar(){
+  if(!hayStream){ pintar("error"); return; }
+  pararEpisodio();
+  if(audio.paused){
+    pintar("cargando");
+    // se vuelve a fijar la fuente en cada play: así el vivo nunca queda atrasado
+    probarDesde(urlBuena ? [urlBuena] : STREAM_URLS.slice(), 0, ++intentoId);
+  } else {
+    intentoId++;
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+    pintar("pausa");
+  }
+}
+
+play.addEventListener("click", alternar);
+barraBtn.addEventListener("click", () => { if(sonando === "epi") alternarEpisodio(epiActual); else alternar(); });
+audio.addEventListener("playing", () => { sonando = "vivo"; pintar("aire"); });
+audio.addEventListener("pause",   () => { if(play.dataset.estado !== "error") pintar("pausa"); });
+audio.addEventListener("error",   () => { if(audio.getAttribute("src")) pintar("error"); });
+audio.addEventListener("stalled", () => pintar("cargando"));
+vol.addEventListener("input", e => { audio.volume = +e.target.value; });
+
+/* Controles en la pantalla bloqueada de Android / iOS */
+if("mediaSession" in navigator){
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title:"En vivo · 102.1 MHz",
+    artist:"Radio Creciendo",
+    album:"Cipolletti, Río Negro",
+    artwork:[
+      {src:"img/icon-192.png", sizes:"192x192", type:"image/png"},
+      {src:"img/icon-512.png", sizes:"512x512", type:"image/png"}
+    ]
+  });
+  navigator.mediaSession.setActionHandler("play",  alternar);
+  navigator.mediaSession.setActionHandler("pause", alternar);
+}
+
+/* La barra aparece cuando el botón grande se va de pantalla */
+if("IntersectionObserver" in window){
+  new IntersectionObserver(([e]) => {
+    barra.dataset.visible = e.isIntersecting ? "0" : "1";
+  }, {threshold:0}).observe(play);
+} else {
+  barra.dataset.visible = "1";
+}
+
+/* ==========================================================================
+   3) FEED DE NOTAS
+   ========================================================================== */
+const pauta = document.getElementById("pauta");
+const chips = document.getElementById("chips");
+let notas = [];
+let filtro = "todo";
+
+/* Todo se muestra en hora de Argentina, escuche quien escuche
+   desde donde escuche: es la hora del aire, no la del celular. */
+const ZONA = "America/Argentina/Buenos_Aires";
+const fHora  = new Intl.DateTimeFormat("es-AR", {timeZone:ZONA, hour:"2-digit", minute:"2-digit", hour12:false});
+const fClave = new Intl.DateTimeFormat("en-CA", {timeZone:ZONA, year:"numeric", month:"2-digit", day:"2-digit"});
+const fFecha = new Intl.DateTimeFormat("es-AR", {timeZone:ZONA, weekday:"long", day:"numeric", month:"long"});
+
+function clave(d){ return fClave.format(d); }
+
+function rotulo(d){
+  const hoy = new Date();
+  const ayer = new Date(hoy.getTime() - 86400000);
+  if(clave(d) === clave(hoy))  return "Hoy";
+  if(clave(d) === clave(ayer)) return "Ayer";
+  return fFecha.format(d);
+}
+
+/* Una nota es "de la región" por su sección, salvo que traiga
+   su propio flag region:true / region:false y decida por sí misma. */
+function esRegional(n){
+  if(typeof n.region === "boolean") return n.region;
+  return !!(CATEGORIAS[n.cat] || {}).region;
+}
+
+function pasa(n){
+  if(filtro === "todo")   return true;
+  if(filtro === "region") return esRegional(n);
+  return n.cat === filtro;
+}
+
+function render(){
+  const lista = notas.filter(pasa);
+  pauta.innerHTML = "";
+
+  if(!lista.length){
+    pauta.innerHTML = '<div class="vacio"><b>Todavía no hay notas en esta sección</b>Probá con otra o volvé a “Todo”.</div>';
+    return;
+  }
+
+  let dia = null;
+  lista.forEach(n => {
+    const d = new Date(n.hora);
+    const k = clave(d);
+    if(k !== dia){
+      dia = k;
+      const h = document.createElement("div");
+      h.className = "dia";
+      h.textContent = rotulo(d);
+      pauta.appendChild(h);
+    }
+
+    const c = CATEGORIAS[n.cat] || {nombre:"Actualidad", region:false};
+    const art = document.createElement("article");
+    art.className = "nota";
+    art.setAttribute("aria-expanded","false");
+    art.tabIndex = 0;
+    art.innerHTML =
+      '<div class="nota__hora">' + fHora.format(d) + '</div>' +
+      '<div>' +
+        '<div class="nota__meta">' + (esRegional(n) ? '<span class="nota__punto" title="De nuestra zona"></span>' : "") + c.nombre + '</div>' +
+        '<h2 class="nota__titulo"></h2>' +
+        '<p class="nota__cuerpo"></p>' +
+      '</div>' +
+      '<div class="nota__mas">Seguir leyendo</div>';
+    art.querySelector(".nota__titulo").textContent = n.titulo;
+    art.querySelector(".nota__cuerpo").textContent = n.cuerpo;
+
+    const abrir = () => art.setAttribute("aria-expanded", art.getAttribute("aria-expanded") === "true" ? "false" : "true");
+    art.addEventListener("click", abrir);
+    art.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); abrir(); } });
+    pauta.appendChild(art);
+  });
+}
+
+function armarChips(){
+  FILTROS.forEach(f => {
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.textContent = f.texto;
+    b.setAttribute("aria-pressed", f.id === filtro ? "true" : "false");
+    b.addEventListener("click", () => {
+      filtro = f.id;
+      [...chips.children].forEach(x => x.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");
+      render();
+    });
+    chips.appendChild(b);
+  });
+}
+
+function ordenar(arr){
+  return arr.slice().sort((a,b) => new Date(b.hora) - new Date(a.hora));
+}
+
+async function cargarFeed(){
+  try{
+    const r = await fetch("noticias.json?v=" + Date.now(), {cache:"no-store"});
+    if(!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    if(Array.isArray(data.notas) && data.notas.length){
+      notas = ordenar(data.notas);
+      render();
+      return;
+    }
+  }catch(e){ /* sin conexión o servidor sin el archivo: se usa la copia local */ }
+
+  try{
+    const local = JSON.parse(document.getElementById("feedLocal").textContent);
+    notas = ordenar(local.notas || []);
+  }catch(e){ notas = []; }
+  render();
+}
+
+armarChips();
+cargarFeed();
+
+
+/* ==========================================================================
+   4) PODCASTS — episodios a demanda
+   ========================================================================== */
+const CAT_POD = {
+  actualidad:"Actualidad",
+  general:"Interés general",
+  deportes:"Deportes",
+  cultura:"Cultura"
+};
+
+const audioPod  = document.getElementById("audioPod");
+const cajaEpis  = document.getElementById("episodios");
+const cajaPauta = document.getElementById("pauta");
+const cajaFiltros = document.getElementById("filtros");
+const btnNotas  = document.getElementById("modoNotas");
+const btnPod    = document.getElementById("modoPod");
+
+let episodios = [];
+let epiActual = null;   // índice del episodio cargado
+let sonando   = null;   // "vivo" | "epi" | null
+
+function mmss(seg){
+  seg = Math.max(0, Math.round(seg || 0));
+  return Math.floor(seg/60) + ":" + String(seg % 60).padStart(2,"0");
+}
+
+function pararEpisodio(){
+  if(!audioPod.paused){
+    audioPod.pause();
+    audioPod.currentTime = 0;
+  }
+  epiActual = null;
+  document.querySelectorAll(".epi").forEach(e => e.dataset.sonando = "0");
+}
+
+function alternarEpisodio(i){
+  const e = episodios[i];
+  if(!e) return;
+
+  // cambiar de episodio: cortar el anterior y el vivo
+  if(epiActual !== i){
+    intentoId++;
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+    pintar("pausa");
+    audioPod.src = e.audio;
+    epiActual = i;
+  }
+
+  if(audioPod.paused){
+    audioPod.play().then(() => {
+      sonando = "epi";
+      document.querySelectorAll(".epi").forEach((el,n) => el.dataset.sonando = n === i ? "1" : "0");
+      barraIco.innerHTML = SVG_PAUSA;
+      document.querySelector(".barra__t1").textContent = e.titulo;
+      barraEstado.textContent = "Episodio · " + mmss(e.duracion);
+      barra.dataset.visible = "1";
+    }).catch(() => {
+      barraEstado.textContent = "No se pudo cargar el audio de este episodio.";
+      epiActual = null;
+    });
+  } else {
+    audioPod.pause();
+    barraIco.innerHTML = SVG_PLAY;
+    document.querySelectorAll(".epi").forEach(el => el.dataset.sonando = "0");
+  }
+}
+
+audioPod.addEventListener("timeupdate", () => {
+  if(epiActual === null || !audioPod.duration) return;
+  const b = document.querySelectorAll(".epi")[epiActual];
+  if(b) b.querySelector(".epi__prog i").style.width = (audioPod.currentTime / audioPod.duration * 100) + "%";
+});
+
+audioPod.addEventListener("ended", () => {
+  pararEpisodio();
+  sonando = null;
+  barraIco.innerHTML = SVG_PLAY;
+  document.querySelector(".barra__t1").textContent = "Radio Creciendo 102.1";
+  barraEstado.textContent = "En vivo desde Cipolletti";
+});
+
+function renderEpisodios(){
+  cajaEpis.innerHTML = "";
+  if(!episodios.length){
+    cajaEpis.innerHTML = '<div class="vacio"><b>Todavía no hay episodios publicados</b>Volvé en un rato, estamos grabando.</div>';
+    return;
+  }
+
+  const cab = document.createElement("div");
+  cab.className = "dia";
+  cab.textContent = "Últimos episodios";
+  cajaEpis.appendChild(cab);
+
+  episodios.forEach((e, i) => {
+    const d = new Date(e.fecha);
+    const c = CAT_POD[e.cat] || "Actualidad";
+    const art = document.createElement("article");
+    art.className = "epi";
+    art.dataset.sonando = "0";
+    art.innerHTML =
+      '<button class="epi__play" aria-label="Escuchar el episodio"><svg viewBox="0 0 24 24">' + SVG_PLAY + '</svg></button>' +
+      '<div>' +
+        '<div class="epi__meta"><span>' + c + '</span><span class="epi__dur">' + mmss(e.duracion) + '</span><span>' + rotulo(d) + '</span></div>' +
+        '<h2 class="epi__titulo"></h2>' +
+        '<p class="epi__desc"></p>' +
+      '</div>' +
+      '<div class="epi__prog"><i></i></div>';
+    art.querySelector(".epi__titulo").textContent = e.titulo;
+    art.querySelector(".epi__desc").textContent = e.descripcion;
+    art.querySelector(".epi__play").addEventListener("click", () => alternarEpisodio(i));
+    cajaEpis.appendChild(art);
+  });
+}
+
+function verModo(cual){
+  const vistas = {
+    notas:     {btn:btnNotas, caja:cajaPauta},
+    podcasts:  {btn:btnPod,   caja:cajaEpis},
+    farmacias: {btn:btnFarm,  caja:document.getElementById("farmacias")}
+  };
+  Object.entries(vistas).forEach(([k,v]) => {
+    v.btn.setAttribute("aria-selected", k === cual ? "true" : "false");
+    v.caja.hidden = k !== cual;
+  });
+  cajaFiltros.hidden = cual !== "notas";
+  window.scrollTo({top: document.querySelector(".modos").offsetTop - 1, behavior:"smooth"});
+}
+
+btnNotas.addEventListener("click", () => verModo("notas"));
+btnPod.addEventListener("click",   () => verModo("podcasts"));
+
+async function cargarPodcasts(){
+  try{
+    const r = await fetch("podcasts.json?v=" + Date.now(), {cache:"no-store"});
+    if(!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    if(Array.isArray(d.episodios) && d.episodios.length){
+      episodios = d.episodios.slice().sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+      renderEpisodios();
+      return;
+    }
+  }catch(e){}
+  try{
+    const local = JSON.parse(document.getElementById("podLocal").textContent);
+    episodios = (local.episodios || []).slice().sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+  }catch(e){ episodios = []; }
+  renderEpisodios();
+}
+
+cargarPodcasts();
+
+
+/* ==========================================================================
+   5) ZÓCALO DE AUSPICIANTES
+   El arte se sube siempre en 1920x400. Si querés otra proporción, cambiá
+   --zocalo-prop en el CSS y listo: no hay que tocar nada más.
+   ========================================================================== */
+const zocalo  = document.getElementById("zocalo");
+const marco   = document.getElementById("zocaloMarco");
+const puntos  = document.getElementById("zocaloPuntos");
+
+let sponsors = [];
+let zIndice  = 0;
+let zReloj   = null;
+let zSegundos = 7;
+
+const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function verSponsor(i){
+  zIndice = (i + sponsors.length) % sponsors.length;
+  marco.querySelectorAll(".zocalo__pieza").forEach((el,n) => el.dataset.ver = n === zIndice ? "1" : "0");
+  puntos.querySelectorAll(".zocalo__punto").forEach((el,n) => el.setAttribute("aria-selected", n === zIndice ? "true" : "false"));
+}
+
+function arrancarRotacion(){
+  if(zReloj) clearInterval(zReloj);
+  if(quieto || sponsors.length < 2) return;
+  zReloj = setInterval(() => verSponsor(zIndice + 1), zSegundos * 1000);
+}
+
+function frenarRotacion(){ if(zReloj){ clearInterval(zReloj); zReloj = null; } }
+
+function renderSponsors(){
+  if(!sponsors.length){ zocalo.hidden = true; return; }
+  zocalo.hidden = false;
+  marco.innerHTML = "";
+  puntos.innerHTML = "";
+
+  sponsors.forEach((s, i) => {
+    const tieneLink = s.enlace && s.enlace.trim();
+    const pieza = document.createElement(tieneLink ? "a" : "div");
+    pieza.className = "zocalo__pieza";
+    pieza.dataset.ver = i === 0 ? "1" : "0";
+    if(tieneLink){
+      pieza.href = s.enlace;
+      pieza.target = "_blank";
+      pieza.rel = "noopener sponsored";
+    }
+    const img = document.createElement("img");
+    img.src = s.imagen;
+    img.alt = "Publicidad de " + s.nombre;
+    img.loading = i === 0 ? "eager" : "lazy";
+    img.width = 1920; img.height = 400;
+    pieza.appendChild(img);
+    marco.appendChild(pieza);
+
+    const p = document.createElement("button");
+    p.className = "zocalo__punto";
+    p.setAttribute("role","tab");
+    p.setAttribute("aria-selected", i === 0 ? "true" : "false");
+    p.setAttribute("aria-label", s.nombre);
+    p.addEventListener("click", () => { verSponsor(i); frenarRotacion(); });
+    puntos.appendChild(p);
+  });
+
+  // si hay uno solo, no hay nada que rotar
+  arrancarRotacion();
+}
+
+// mientras el dedo o el mouse están encima, el aviso no se mueve
+marco.addEventListener("mouseenter", frenarRotacion);
+marco.addEventListener("mouseleave", arrancarRotacion);
+marco.addEventListener("touchstart", frenarRotacion, {passive:true});
+
+// y tampoco cuando la pestaña está en segundo plano
+document.addEventListener("visibilitychange", () => {
+  document.hidden ? frenarRotacion() : arrancarRotacion();
+});
+
+async function cargarSponsors(){
+  let d = null;
+  try{
+    const r = await fetch("sponsors.json?v=" + Date.now(), {cache:"no-store"});
+    if(r.ok) d = await r.json();
+  }catch(e){}
+  if(!d){
+    try{ d = JSON.parse(document.getElementById("sponLocal").textContent); }catch(e){ d = null; }
+  }
+  if(!d){ zocalo.hidden = true; return; }
+
+  zSegundos = Number(d.rotacion) || 7;
+  const activos = (d.sponsors || []).filter(s => s.activo !== false && s.imagen);
+
+  // Los marcados como fijos abren siempre, en el orden cargado: son los
+  // que pagan el lugar principal. El resto se baraja en cada visita para
+  // que ninguno quede siempre último.
+  const fijos  = activos.filter(s => s.fijo === true);
+  const rotan  = activos.filter(s => s.fijo !== true);
+  for(let i = rotan.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [rotan[i], rotan[j]] = [rotan[j], rotan[i]];
+  }
+  sponsors = fijos.concat(rotan);
+  renderSponsors();
+}
+
+cargarSponsors();
+
+
+/* ==========================================================================
+   6) FARMACIAS DE TURNO
+   El turno corre de 08:30 a 08:30 del día siguiente. Esto importa: a las 3 de
+   la mañana del 16 la que atiende sigue siendo la del 15, y ese es justo el
+   momento en que la gente entra a buscar el dato.
+   ========================================================================== */
+const franja       = document.getElementById("turno");
+const cajaFarm     = document.getElementById("farmacias");
+const btnFarm      = document.getElementById("modoFarm");
+const turnoRotulo  = document.getElementById("turnoRotulo");
+const turnoNombres = document.getElementById("turnoNombres");
+const turnoDirs    = document.getElementById("turnoDirs");
+
+const SEMANA = ["dom","lun","mar","mié","jue","vie","sáb"];
+let farmData = null;
+
+function partesAhora(){
+  const f = new Intl.DateTimeFormat("en-CA", {
+    timeZone:ZONA, year:"numeric", month:"2-digit", day:"2-digit",
+    hour:"2-digit", minute:"2-digit", hour12:false
+  }).formatToParts(new Date());
+  const p = {};
+  f.forEach(x => p[x.type] = x.value);
+  return {anio:+p.year, mes:+p.month, dia:+p.day, hora:+p.hour, min:+p.minute};
+}
+
+/* Devuelve qué día del mes rige el turno en este momento. */
+function diaDeTurno(){
+  const a = partesAhora();
+  const [hi, mi] = (farmData.horaInicio || "08:30").split(":").map(Number);
+  const antesDelCambio = (a.hora < hi) || (a.hora === hi && a.min < mi);
+  return {
+    dia: antesDelCambio ? a.dia - 1 : a.dia,
+    mes: a.mes, anio: a.anio, diaReal: a.dia,
+    antes: antesDelCambio
+  };
+}
+
+function mapa(dir){
+  return "https://www.google.com/maps/search/?api=1&query=" +
+         encodeURIComponent(dir + ", Cipolletti, Río Negro");
+}
+
+function pintarFranja(){
+  const t = diaDeTurno();
+
+  // el calendario cargado es de un mes distinto al de hoy
+  if(t.mes !== farmData.mes || t.anio !== farmData.anio){
+    turnoRotulo.textContent = "Farmacias de turno";
+    turnoNombres.textContent = "Ver el cronograma de " + farmData.mesNombre;
+    turnoDirs.textContent = "";
+    franja.hidden = false;
+    return;
+  }
+
+  const reg = farmData.dias.find(d => d.dia === t.dia);
+  if(!reg){
+    // pasó a otro mes: el turno de anoche era del mes anterior
+    turnoRotulo.textContent = "Farmacias de turno";
+    turnoNombres.textContent = "Ver el cronograma del mes";
+    turnoDirs.textContent = "";
+    franja.hidden = false;
+    return;
+  }
+
+  turnoRotulo.textContent = t.antes ? "De turno ahora (desde anoche)" : "Farmacia de turno hoy";
+  turnoNombres.textContent = reg.farmacias.map(f => f.nombre).join("  ·  ");
+  turnoDirs.textContent = reg.farmacias.map(f => f.direccion).join("  ·  ");
+  franja.hidden = false;
+}
+
+function renderFarmacias(){
+  cajaFarm.innerHTML = "";
+  const t = diaDeTurno();
+  const mismoMes = (t.mes === farmData.mes && t.anio === farmData.anio);
+
+  const cab = document.createElement("div");
+  cab.className = "dia";
+  cab.textContent = "Farmacias de turno · " + farmData.mesNombre + " " + farmData.anio;
+  cajaFarm.appendChild(cab);
+
+  const av = document.createElement("div");
+  av.className = "farm__aviso";
+  av.innerHTML = "<b>El turno va de las " + (farmData.horaInicio || "08:30") +
+                 " a las " + (farmData.horaInicio || "08:30") + " del día siguiente.</b><br>" +
+                 "Si son las 2 de la mañana, te sirve la farmacia del día anterior. " +
+                 "Tocá una dirección y se abre el mapa.";
+  cajaFarm.appendChild(av);
+
+  farmData.dias.forEach(reg => {
+    const fecha = new Date(farmData.anio, farmData.mes - 1, reg.dia);
+    const esHoy = mismoMes && reg.dia === t.dia;
+    const art = document.createElement("article");
+    art.className = "farm";
+    art.dataset.hoy = esHoy ? "1" : "0";
+
+    const col = document.createElement("div");
+    col.className = "farm__dia";
+    col.innerHTML = '<span class="farm__num">' + reg.dia + '</span>' +
+                    '<span class="farm__sem">' + SEMANA[fecha.getDay()] + '</span>' +
+                    (esHoy ? '<span class="farm__hoy">DE TURNO</span>' : '');
+    art.appendChild(col);
+
+    const caja = document.createElement("div");
+    reg.farmacias.forEach(f => {
+      const fila = document.createElement("span");
+      fila.className = "farm__uno";
+      const n = document.createElement("span");
+      n.className = "farm__nom";
+      n.textContent = f.nombre;
+      const a = document.createElement("a");
+      a.className = "farm__dir";
+      a.href = mapa(f.direccion);
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = f.direccion;
+      fila.appendChild(n);
+      fila.appendChild(document.createElement("br"));
+      fila.appendChild(a);
+      caja.appendChild(fila);
+    });
+    art.appendChild(caja);
+    cajaFarm.appendChild(art);
+  });
+}
+
+async function cargarFarmacias(){
+  let d = null;
+  try{
+    const r = await fetch("farmacias.json?v=" + Date.now(), {cache:"no-store"});
+    if(r.ok) d = await r.json();
+  }catch(e){}
+  if(!d){
+    try{ d = JSON.parse(document.getElementById("farmLocal").textContent); }catch(e){}
+  }
+  if(!d || !Array.isArray(d.dias) || !d.dias.length){ franja.hidden = true; return; }
+  farmData = d;
+  pintarFranja();
+  renderFarmacias();
+}
+
+franja.addEventListener("click", () => verModo("farmacias"));
+btnFarm.addEventListener("click", () => verModo("farmacias"));
+
+// si la pestaña quedó abierta toda la noche, al volver el dato se recalcula
+document.addEventListener("visibilitychange", () => {
+  if(!document.hidden && farmData){ pintarFranja(); renderFarmacias(); }
+});
+
+cargarFarmacias();
+
+/* ==========================================================================
+   7) INSTALACIÓN COMO APP
+   ========================================================================== */
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

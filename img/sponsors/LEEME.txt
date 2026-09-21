@@ -1,0 +1,11 @@
+Arte de los auspiciantes.
+
+Medida única: 1920 x 400 px, JPG.
+La página lo escala sola a cualquier pantalla.
+
+Para que se lea en celular:
+  - nombre del comercio: mínimo 100 px de alto en este lienzo
+  - texto secundario: mínimo 50 px
+  - margen de seguridad: 80 px en los bordes
+
+Cargalos desde panel.html, pestaña Sponsors.
