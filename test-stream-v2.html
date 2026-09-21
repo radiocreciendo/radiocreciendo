@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es-AR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Diagnóstico del stream · Radio Creciendo</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:680px;margin:0 auto;padding:24px 18px 60px;background:#FAF6F9;color:#241B27;line-height:1.5}
+h1{font-size:1.25rem;margin-bottom:4px}
+h2{font-size:1.05rem;margin:34px 0 6px;padding-top:22px;border-top:1px solid #E9DFE7}
+p{margin:6px 0 12px}
+ul{padding:0}
+li{margin-bottom:10px;padding:11px 13px;background:#fff;border:1px solid #E9DFE7;border-radius:10px;list-style:none}
+code{font-size:.8rem;word-break:break-all;display:block;margin-bottom:6px;color:#851B80}
+.r{font-weight:700}
+.r[data-r="ok"]{color:#048F3F}
+.r[data-r="no"]{color:#B4442F}
+.r[data-r="va"]{color:#6B5E6D}
+button{font:inherit;font-weight:700;background:#048F3F;color:#fff;border:0;padding:11px 20px;border-radius:9px;cursor:pointer}
+button:disabled{background:#6B5E6D;cursor:progress}
+.caja{background:#fff;border:1px solid #E9DFE7;border-radius:10px;padding:12px;margin-top:12px}
+iframe{width:100%;height:330px;border:0;border-radius:8px;display:block}
+.nota{font-size:.86rem;color:#6B5E6D}
+</style></head><body>
+
+<h1>Diagnóstico del stream</h1>
+<p class="nota">Página: <b id="donde"></b></p>
+
+<h2>Prueba 1 · Conexión directa, de a una</h2>
+<p>Prueba cada dirección por separado, espera hasta 12 segundos y cierra la conexión antes de pasar a la siguiente. Tarda unos dos minutos en total.</p>
+<button id="ir">Probar de a una</button>
+<ul id="lista"></ul>
+
+<h2>Prueba 2 · Reproductor de Genex embebido</h2>
+<p>Carga el reproductor que te dio Genex dentro de esta página. Si suena solo o al tocar play dentro del recuadro, tenemos plan B.</p>
+<button id="ir2">Cargar reproductor de Genex</button>
+<div class="caja" id="caja2" hidden></div>
+
+<script>
+document.getElementById("donde").textContent = location.host || "archivo local";
+
+const URLS = [
+  "https://genexservicios.com:2000/stream/fmcreciendo",
+  "https://genexservicios.com:2000/listen/fmcreciendo/stream",
+  "https://genexservicios.com:2000/fmcreciendo",
+  "https://genexservicios.com:2000/fmcreciendo/stream",
+  "https://genexservicios.com:8064/stream",
+  "https://genexservicios.com:8064/;stream.mp3",
+  "https://genexservicios.com:8064/;"
+];
+
+const ERRORES = {
+  1: "error 1: cancelado",
+  2: "error 2: falla de red o rechazo del servidor",
+  3: "error 3: el audio llegó pero no se pudo decodificar",
+  4: "error 4: formato no soportado o acceso denegado"
+};
+
+const lista = document.getElementById("lista");
+URLS.forEach((u,i) => {
+  const li = document.createElement("li");
+  li.innerHTML = '<code>'+u+'</code><span class="r" id="r'+i+'">sin probar</span>';
+  lista.appendChild(li);
+});
+
+function probarUna(u, r){
+  return new Promise(fin => {
+    const a = new Audio();
+    let listo = false;
+    const cerrar = () => { try{ a.pause(); a.removeAttribute("src"); a.load(); }catch(e){} };
+    const terminar = (txt, tipo) => {
+      if(listo) return;
+      listo = true;
+      r.textContent = txt; r.dataset.r = tipo;
+      cerrar(); setTimeout(fin, 600);
+    };
+    a.addEventListener("playing", () => terminar("SUENA", "ok"));
+    a.addEventListener("error", () => {
+      const c = a.error ? a.error.code : 0;
+      terminar(ERRORES[c] || "error desconocido", "no");
+    });
+    r.textContent = "probando…"; r.dataset.r = "va";
+    a.volume = 0.05;
+    a.src = u;
+    a.play().catch(err => {
+      // si play() se rechaza sin evento error, dejamos el motivo a la vista
+      setTimeout(() => terminar("rechazado: " + (err && err.name ? err.name : "motivo desconocido"), "no"), 1500);
+    });
+    setTimeout(() => terminar("sin respuesta en 12 s", "no"), 12000);
+  });
+}
+
+document.getElementById("ir").addEventListener("click", async e => {
+  const b = e.currentTarget;
+  b.disabled = true; b.textContent = "Probando…";
+  for(let i = 0; i < URLS.length; i++){
+    await probarUna(URLS[i], document.getElementById("r"+i));
+  }
+  b.disabled = false; b.textContent = "Probar de nuevo";
+});
+
+document.getElementById("ir2").addEventListener("click", e => {
+  const caja = document.getElementById("caja2");
+  caja.hidden = false;
+  caja.innerHTML = '<iframe src="https://genexservicios.com:2000/AudioPlayer/fmcreciendo?mount=&" allow="autoplay" title="Reproductor de Genex"></iframe>';
+  e.currentTarget.textContent = "Recargar reproductor";
+});
+</script>
+</body></html>
