@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · Radio Creciendo</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#100C1B; --ciruela:#340634; --magenta:#851B80; --senal:#048F3F; --alerta:#B4442F;
+  --papel:#FAF6F9; --tinta:#241B27; --gris:#6B5E6D; --linea:#E9DFE7; --tarjeta:#fff;
+}
+@media (prefers-color-scheme: dark){
+  :root{--papel:#16101C;--tinta:#F3ECF2;--gris:#A08FA6;--linea:#2D2336;--tarjeta:#1C1524}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:'Archivo',system-ui,sans-serif;font-size:16px;line-height:1.5}
+:focus-visible{outline:3px solid var(--senal);outline-offset:2px}
+header{background:linear-gradient(120deg,var(--noche),var(--ciruela) 60%,var(--magenta));color:#fff;padding:18px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header img{width:38px;height:38px;border-radius:9px}
+header h1{margin:0;font-size:1.15rem;font-weight:800;letter-spacing:-.01em}
+header p{margin:0;font-size:.8rem;color:rgba(255,255,255,.7)}
+header .sp{flex:1}
+main{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+button,.btn{font-family:inherit;font-size:.88rem;font-weight:700;border:1px solid var(--linea);background:var(--tarjeta);color:var(--tinta);padding:8px 14px;border-radius:9px;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover:not(:disabled){border-color:var(--gris)}
+button:disabled{opacity:.5;cursor:default}
+button.fuerte{background:var(--senal);border-color:var(--senal);color:#fff}
+button.peligro{color:var(--alerta);border-color:transparent;background:none}
+button.chico{padding:5px 10px;font-size:.78rem}
+header button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff}
+.tabs{display:flex;gap:4px;background:var(--linea);padding:4px;border-radius:999px;margin-bottom:20px;overflow-x:auto}
+.tab{flex:1;min-width:max-content;border:0;background:transparent;color:var(--gris);border-radius:999px;padding:9px 14px;font-weight:700;font-size:.85rem;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--tarjeta);color:var(--tinta)}
+.tab .n{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:999px;background:var(--magenta);color:#fff;font-size:.72rem;line-height:20px}
+.barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.barra h2{margin:0;font-size:1.05rem;flex:1}
+.card{background:var(--tarjeta);border:1px solid var(--linea);border-radius:13px;padding:15px;margin-bottom:12px}
+.card h3{margin:0 0 4px;font-size:1rem;line-height:1.3}
+.meta{font-size:.76rem;color:var(--gris);display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.chip{display:inline-block;padding:1px 9px;border-radius:999px;background:var(--linea);color:var(--tinta);font-size:.72rem;font-weight:700}
+.chip.ok{background:rgba(4,143,63,.14);color:var(--senal)}
+.chip.mal{background:rgba(180,68,47,.14);color:var(--alerta)}
+.chip.reg{background:rgba(133,27,128,.14);color:var(--magenta)}
+.resumen{font-size:.9rem;color:var(--tinta);margin:6px 0 10px;opacity:.85}
+.acc{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fila{display:flex;gap:11px;flex-wrap:wrap;margin-bottom:12px}
+.campo{flex:1;min-width:170px}
+label{display:block;font-size:.76rem;font-weight:700;color:var(--gris);margin-bottom:4px}
+input,select,textarea{width:100%;font-family:inherit;font-size:.94rem;color:var(--tinta);background:var(--papel);border:1px solid var(--linea);border-radius:8px;padding:9px 11px}
+input[type=checkbox]{width:auto}
+input[readonly]{opacity:.7}
+textarea{resize:vertical;min-height:110px;line-height:1.5}
+.contador{font-size:.75rem;color:var(--gris);margin-top:4px}
+.contador[data-e="justo"]{color:var(--senal);font-weight:700}
+.contador[data-e="largo"]{color:var(--alerta);font-weight:700}
+.ayuda{font-size:.8rem;color:var(--gris);margin:4px 0 0}
+.aviso{background:rgba(4,143,63,.1);border:1px solid var(--senal);padding:11px 14px;border-radius:10px;font-size:.87rem;margin-bottom:14px}
+.aviso.mal{background:rgba(180,68,47,.1);border-color:var(--alerta)}
+.vacio{text-align:center;color:var(--gris);padding:36px 10px}
+.vacio b{display:block;color:var(--tinta);margin-bottom:4px}
+.editor{border:2px solid var(--senal);border-radius:14px;padding:16px;margin-bottom:18px;background:var(--tarjeta)}
+.editor h2{margin:0 0 12px;font-size:1.05rem}
+.original{background:var(--papel);border:1px dashed var(--linea);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.86rem}
+.original b{display:block;font-size:.76rem;color:var(--gris);margin-bottom:3px}
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:10px 0}
+.foto{border:1px solid var(--linea);border-radius:11px;padding:8px;background:var(--papel)}
+.foto img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:7px;display:block;margin-bottom:6px}
+.foto .acc{margin-top:6px;gap:5px}
+.foto[data-portada="1"]{border-color:var(--senal);box-shadow:0 0 0 2px var(--senal)}
+.subir{border:2px dashed var(--linea);border-radius:11px;padding:14px;text-align:center;margin-bottom:12px}
+.subir input[type=file]{display:none}
+.subir label{display:inline-block;background:var(--senal);color:#fff;font-weight:700;font-size:.88rem;padding:9px 16px;border-radius:9px;cursor:pointer;margin:0}
+.subir p{margin:8px 0 0;font-size:.8rem;color:var(--gris)}
+.login{max-width:380px;margin:12vh auto;padding:0 18px}
+.login .card{padding:22px}
+.mini{width:84px;height:62px;object-fit:cover;border-radius:7px;float:left;margin-right:12px}
+.lista-fila{display:flex;gap:12px;align-items:flex-start}
+.lista-fila>div{flex:1;min-width:0}
+audio{width:100%;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ===== utilidades ===== */
+const CATS = {
+  altovalle:"Alto Valle", neuquen:"Neuquén", bariloche:"Bariloche", energia:"Energía",
+  nacional:"Nacional", internacional:"Internacional", deportes:"Deportes",
+  economia:"Economía", comunidad:"Comunidad", eventos:"Eventos"
+};
+const REGIONALES = ["altovalle","neuquen","bariloche","energia"];
+const CATS_POD = {actualidad:"Actualidad", general:"Interés general", deportes:"Deportes", cultura:"Cultura"};
+const MAX_SEG_POD = 300;   // episodios de hasta 5 minutos (mismo tope que el servidor)
+
+function h(tag, attrs, ...hijos){
+  const e = document.createElement(tag);
+  for(const [k,v] of Object.entries(attrs || {})){
+    if(v === false || v == null) continue;
+    if(k === "class") e.className = v;
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if(k === "value") e.value = v;
+    else if(k === "checked") e.checked = !!v;
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  hijos.flat().forEach(x => { if(x != null && x !== false) e.append(x.nodeType ? x : document.createTextNode(x)); });
+  return e;
+}
+const fechaCorta = iso => new Date(iso).toLocaleString("es-AR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"America/Argentina/Buenos_Aires"});
+function aLocalInput(iso){ const d = iso ? new Date(iso) : new Date(); const p = n => String(n).padStart(2,"0");
+  return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes()); }
+const aISO = v => v ? new Date(v).toISOString() : new Date().toISOString();
+
+let clave = sessionStorage.getItem("rc_clave") || "";
+
+async function api(ruta, {metodo="GET", cuerpo, form} = {}){
+  const r = await fetch("/api/admin/" + ruta, {
+    method: metodo,
+    headers: Object.assign({authorization:"Bearer " + clave}, cuerpo ? {"content-type":"application/json"} : {}),
+    body: form || (cuerpo ? JSON.stringify(cuerpo) : undefined)
+  });
+  let d = {}; try{ d = await r.json(); }catch{}
+  if(r.status === 401){ salir(true); throw new Error("Clave incorrecta"); }
+  if(!r.ok) throw new Error(d.error || ("Error " + r.status));
+  return d;
+}
+
+// Achica la foto en el celular o la compu antes de subirla: sale en 1600 px, JPG liviano.
+async function achicar(file, max = 1600){
+  let bmp;
+  try{ bmp = await createImageBitmap(file); }
+  catch{ throw new Error("No pude abrir esa foto. Probá con un JPG o PNG."); }
+  const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(bmp,0,0,c.width,c.height);
+  return new Promise(ok => c.toBlob(ok, "image/jpeg", .82));
+}
+async function subirFoto(file){
+  const blob = await achicar(file);
+  const fd = new FormData(); fd.append("archivo", blob, "foto.jpg");
+  return api("media", {metodo:"POST", form:fd});   // → {key, url}
+}
+
+function aviso(texto, mal){
+  const a = h("div", {class:"aviso" + (mal ? " mal" : ""), role:"status"}, texto);
+  const v = document.getElementById("avisos"); v.prepend(a);
+  setTimeout(() => a.remove(), mal ? 9000 : 4500);
+}
+
+/* ===== estructura ===== */
+const app = document.getElementById("app");
+let pestana = "cola", resumen = {};
+
+function salir(mostrarAviso){
+  sessionStorage.removeItem("rc_clave"); clave = "";
+  login(mostrarAviso ? "La clave ya no es válida. Ingresá de nuevo." : "");
+}
+
+function login(msg){
+  app.replaceChildren(
+    h("div", {class:"login"},
+      h("div", {class:"card"},
+        h("h1", {style:"margin:0 0 4px;font-size:1.2rem"}, "Dashboard · Radio Creciendo"),
+        h("p", {class:"ayuda", style:"margin:0 0 14px"}, "Ingresá la clave del panel."),
+        msg ? h("div", {class:"aviso mal"}, msg) : null,
+        h("form", {onsubmit: async e => {
+          e.preventDefault();
+          clave = e.target.clave.value;
+          const b = e.target.querySelector("button"); b.disabled = true; b.textContent = "Verificando…";
+          try{ await api("resumen"); sessionStorage.setItem("rc_clave", clave); iniciar(); }
+          catch(err){ b.disabled = false; b.textContent = "Entrar"; login(err.message); }
+        }},
+          h("label", {for:"clave"}, "Clave"),
+          h("input", {id:"clave", name:"clave", type:"password", autocomplete:"current-password", required:true, autofocus:true}),
+          h("div", {style:"margin-top:14px"}, h("button", {class:"fuerte", type:"submit"}, "Entrar"))
+        )
+      )
+    )
+  );
+}
+
+const PESTANAS = [
+  ["cola","Notas de otros medios"], ["noticias","Noticias"], ["fuentes","Fuentes"],
+  ["podcasts","Podcasts"], ["historia","Historia"]
+];
+
+async function iniciar(){
+  app.replaceChildren(
+    h("header", {},
+      h("img", {src:"../img/icon-192.png", alt:""}),
+      h("div", {}, h("h1", {}, "Dashboard"), h("p", {}, "Radio Creciendo 102.1")),
+      h("span", {class:"sp"}),
+      h("a", {class:"btn", href:"../", target:"_blank", rel:"noopener", style:"background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)"}, "Ver el sitio ↗"),
+      h("button", {onclick:() => salir(false)}, "Salir")
+    ),
+    h("main", {},
+      h("div", {id:"avisos", "aria-live":"polite"}),
+      h("div", {class:"tabs", id:"tabs", role:"tablist"}),
+      h("div", {id:"vista"})
+    )
+  );
+  await refrescarResumen();
+  mostrar(pestana);
+}
+
+async function refrescarResumen(){
+  try{ resumen = await api("resumen"); }catch{}
+  const t = document.getElementById("tabs"); if(!t) return;
+  t.replaceChildren(...PESTANAS.map(([id, nombre]) =>
+    h("button", {class:"tab", role:"tab", "aria-selected": id === pestana ? "true" : "false", onclick:() => mostrar(id)},
+      nombre, id === "cola" && resumen.pendientes ? h("span", {class:"n"}, resumen.pendientes) : null)
+  ));
+}
+
+function mostrar(id){
+  pestana = id;
+  refrescarResumen();
+  const v = document.getElementById("vista"); v.replaceChildren();
+  ({cola:vistaCola, noticias:vistaNoticias, fuentes:vistaFuentes, podcasts:vistaPodcasts, historia:vistaHistoria})[id](v);
+}
+
+/* ===== formulario de nota (sirve para nota propia, edición y aceptar de la cola) ===== */
+function formNota({inicial = {}, original = null, textoBoton = "Publicar", alGuardar, alCancelar, fuenteFija = false}){
+  const f = {imagen: inicial.imagen || null};
+  const titulo = h("input", {value: inicial.titulo || "", maxlength:200, required:true});
+  const cat = h("select", {}, ...Object.entries(CATS).map(([k,v]) => h("option", {value:k, selected: k === (inicial.cat || "altovalle")}, v)));
+  const fecha = h("input", {type:"datetime-local", value: aLocalInput(inicial.publicada_en)});
+  const cuerpo = h("textarea", {maxlength:4000, required:true}); cuerpo.value = inicial.cuerpo || "";
+  const cont = h("div", {class:"contador"});
+  const region = h("input", {type:"checkbox", id:"reg", checked: !!inicial.region});
+  const estado = h("select", {}, h("option", {value:"publicada", selected: inicial.estado !== "borrador"}, "Publicada"), h("option", {value:"borrador", selected: inicial.estado === "borrador"}, "Borrador (no se ve)"));
+  const fn = h("input", {value: inicial.fuente_nombre || "", readonly: fuenteFija, placeholder:"Solo si la nota es de otro medio"});
+  const fu = h("input", {type:"url", value: inicial.fuente_url || "", readonly: fuenteFija, placeholder:"https://…"});
+  const prev = h("div", {});
+  const err = h("div", {class:"aviso mal", hidden:true});
+
+  const contar = () => {
+    const n = cuerpo.value.length;
+    cont.textContent = n + " caracteres" + (n < 300 ? " · en radio rinden 300 a 480 (cuatro líneas)" : n <= 480 ? " · largo justo" : " · largo, conviene acortar");
+    cont.dataset.e = n >= 300 && n <= 480 ? "justo" : n > 480 ? "largo" : "";
+  };
+  const regAuto = () => { const r = REGIONALES.includes(cat.value); region.checked = r || region.checked; region.disabled = r; };
+  cuerpo.addEventListener("input", contar); cat.addEventListener("change", regAuto); contar(); regAuto();
+
+  const pintarFoto = () => prev.replaceChildren(
+    f.imagen ? h("div", {class:"acc"}, h("img", {class:"mini", src:"/media/" + f.imagen, alt:""}), h("button", {type:"button", class:"peligro chico", onclick:() => { f.imagen = null; pintarFoto(); }}, "Quitar foto")) : null
+  );
+  pintarFoto();
+  const archivo = h("input", {type:"file", accept:"image/*", id:"fnota", onchange: async e => {
+    const file = e.target.files[0]; if(!file) return;
+    try{ f.imagen = (await subirFoto(file)).key; pintarFoto(); }catch(x){ aviso(x.message, true); }
+    e.target.value = "";
+  }});
+
+  const btn = h("button", {class:"fuerte", type:"submit"}, textoBoton);
+  const form = h("form", {onsubmit: async e => {
+    e.preventDefault(); err.hidden = true; btn.disabled = true;
+    try{
+      await alGuardar({
+        titulo:titulo.value, cuerpo:cuerpo.value, cat:cat.value, region:region.checked || REGIONALES.includes(cat.value),
+        imagen:f.imagen, estado:estado.value, publicada_en:aISO(fecha.value),
+        fuente_nombre:fn.value, fuente_url:fu.value
+      });
+    }catch(x){ err.textContent = x.message; err.hidden = false; btn.disabled = false; }
+  }},
+    original,
+    h("div", {class:"fila"}, h("div", {class:"campo", style:"flex:3"}, h("label", {}, "Título"), titulo)),
+    h("div", {class:"fila"},
+      h("div", {class:"campo"}, h("label", {}, "Sección"), cat),
+      h("div", {class:"campo"}, h("label", {}, "Fecha y hora"), fecha),
+      h("div", {class:"campo"}, h("label", {}, "Estado"), estado)),
+    h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Cuerpo"), cuerpo, cont)),
+    h("div", {class:"fila"}, h("label", {style:"display:flex;gap:8px;align-items:center;margin:0"}, region, "Nota de la región (punto verde)")),
+    h("div", {class:"fila"},
+      h("div", {class:"campo"}, h("label", {}, "Medio de origen"), fn),
+      h("div", {class:"campo"}, h("label", {}, "Link a la nota original"), fu)),
+    fuenteFija ? h("p", {class:"ayuda"}, "Las notas de otros medios se publican siempre con el crédito y el link al original.") : null,
+    h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Foto (opcional)"), archivo, prev)),
+    err,
+    h("div", {class:"acc"}, btn, alCancelar ? h("button", {type:"button", onclick:alCancelar}, "Cancelar") : null)
+  );
+  return form;
+}
+
+/* ===== COLA ===== */
+async function vistaCola(v){
+  v.append(h("div", {class:"barra"},
+    h("h2", {}, "Notas de otros medios"),
+    h("button", {id:"btnAct", onclick: () => actualizarFuentes(true)}, "Buscar notas nuevas")));
+  const caja = h("div", {id:"colaCaja"}); v.append(caja);
+  await cargarCola(caja);
+  const viejo = !resumen.ultimoChequeo || (Date.now() - new Date(resumen.ultimoChequeo).getTime() > 30 * 60000);
+  if(viejo && resumen.fuentes) actualizarFuentes(false);
+}
+
+async function actualizarFuentes(manual){
+  const b = document.getElementById("btnAct"); if(b){ b.disabled = true; b.textContent = "Buscando…"; }
+  try{
+    const r = await api("fuentes/actualizar", {metodo:"POST"});
+    const nuevas = r.resultado.reduce((s, x) => s + (x.nuevas || 0), 0);
+    const fallas = r.resultado.filter(x => x.error);
+    if(manual || nuevas) aviso(nuevas ? nuevas + " notas nuevas para revisar." : "No hay notas nuevas.");
+    if(fallas.length) aviso("No se pudo leer: " + fallas.map(x => x.nombre).join(", ") + ". Mirá la pestaña Fuentes.", true);
+    await refrescarResumen();
+    const c = document.getElementById("colaCaja"); if(c && pestana === "cola") await cargarCola(c);
+  }catch(e){ aviso(e.message, true); }
+  const b2 = document.getElementById("btnAct"); if(b2){ b2.disabled = false; b2.textContent = "Buscar notas nuevas"; }
+}
+
+async function cargarCola(caja){
+  const {cola} = await api("cola");
+  caja.replaceChildren();
+  if(!cola.length){
+    caja.append(h("div", {class:"vacio"}, h("b", {}, resumen.fuentes ? "No hay notas pendientes" : "Todavía no cargaste fuentes"),
+      resumen.fuentes ? "Tocá “Buscar notas nuevas” o esperá a la próxima revisión." : "Andá a la pestaña Fuentes y agregá el feed RSS de un medio."));
+    return;
+  }
+  caja.append(h("p", {class:"ayuda", style:"margin:0 0 12px"}, "Elegí qué se republica. Al aceptar, reescribila en tus palabras para la radio: se publica con el crédito y el link al medio original."));
+  cola.forEach(c => {
+    const card = h("div", {class:"card"});
+    const cuerpo = () => card.replaceChildren(
+      h("div", {class:"meta"}, h("span", {class:"chip"}, c.fuente_nombre), h("span", {}, fechaCorta(c.fecha)), h("a", {href:c.link, target:"_blank", rel:"noopener noreferrer"}, "Ver original ↗")),
+      h("h3", {}, c.titulo),
+      c.resumen ? h("p", {class:"resumen"}, c.resumen) : null,
+      h("div", {class:"acc"},
+        h("button", {class:"fuerte chico", onclick: abrirEditor}, "Aceptar y editar"),
+        h("button", {class:"peligro chico", onclick: async () => { await api("cola/" + c.id + "/rechazar", {metodo:"POST"}); card.remove(); refrescarResumen(); }}, "Rechazar"))
+    );
+    const abrirEditor = () => card.replaceChildren(h("div", {class:"editor", style:"margin:0"},
+      h("h2", {}, "Republicar nota"),
+      formNota({
+        inicial:{titulo:c.titulo, cuerpo:c.resumen || "", cat:c.cat_default, fuente_nombre:c.fuente_nombre, fuente_url:c.link},
+        fuenteFija:true, textoBoton:"Publicar nota",
+        original: h("div", {class:"original"}, h("b", {}, "Texto del medio (referencia)"), c.resumen || "Sin resumen en el feed.", " ", h("a", {href:c.link, target:"_blank", rel:"noopener noreferrer"}, "Abrir nota completa ↗")),
+        alGuardar: async d => { await api("cola/" + c.id + "/aceptar", {metodo:"POST", cuerpo:d}); aviso("Nota publicada."); card.remove(); refrescarResumen(); },
+        alCancelar: cuerpo
+      })));
+    cuerpo(); caja.append(card);
+  });
+}
+
+/* ===== NOTICIAS ===== */
+async function vistaNoticias(v){
+  const caja = h("div", {});
+  v.append(h("div", {class:"barra"}, h("h2", {}, "Noticias publicadas"),
+    h("button", {class:"fuerte", onclick: () => nuevo()}, "+ Nota propia")), caja);
+
+  const lista = async () => {
+    const {noticias} = await api("noticias");
+    const l = h("div", {id:"listaNotas"});
+    if(!noticias.length) l.append(h("div", {class:"vacio"}, h("b", {}, "Todavía no hay notas"), "Escribí la primera con “+ Nota propia”."));
+    noticias.forEach(n => l.append(h("div", {class:"card"},
+      h("div", {class:"lista-fila"},
+        n.imagen ? h("img", {class:"mini", src:"/media/" + n.imagen, alt:""}) : null,
+        h("div", {},
+          h("div", {class:"meta"}, h("span", {class:"chip"}, CATS[n.cat] || n.cat), n.region ? h("span", {class:"chip reg"}, "Región") : null,
+            h("span", {class:"chip " + (n.estado === "publicada" ? "ok" : "mal")}, n.estado), h("span", {}, fechaCorta(n.publicada_en)),
+            n.fuente_nombre ? h("span", {}, "Fuente: " + n.fuente_nombre) : null),
+          h("h3", {}, n.titulo),
+          h("div", {class:"acc", style:"margin-top:8px"},
+            h("button", {class:"chico", onclick: () => editar(n)}, "Editar"),
+            h("a", {class:"btn chico", href:"../nota.html?s=" + encodeURIComponent(n.slug), target:"_blank", rel:"noopener"}, "Ver ↗"),
+            h("button", {class:"peligro chico", onclick: async () => { if(confirm("¿Borrar esta nota?")){ await api("noticias/" + n.id, {metodo:"DELETE"}); mostrar("noticias"); } }}, "Borrar"))))
+    )));
+    caja.replaceChildren(l);
+  };
+  const nuevo = () => caja.replaceChildren(h("div", {class:"editor"}, h("h2", {}, "Nota propia"),
+    formNota({alGuardar: async d => { await api("noticias", {metodo:"POST", cuerpo:d}); aviso("Nota guardada."); mostrar("noticias"); }, alCancelar: lista})));
+  const editar = n => caja.replaceChildren(h("div", {class:"editor"}, h("h2", {}, "Editar nota"),
+    formNota({inicial:n, fuenteFija: n.origen === "republicada", textoBoton:"Guardar cambios",
+      alGuardar: async d => { await api("noticias/" + n.id, {metodo:"PUT", cuerpo:d}); aviso("Cambios guardados."); mostrar("noticias"); }, alCancelar: lista})));
+  await lista();
+}
+
+/* ===== FUENTES ===== */
+async function vistaFuentes(v){
+  const caja = h("div", {});
+  const url = h("input", {type:"url", placeholder:"https://sitio.com/feed", id:"furl"});
+  const nombre = h("input", {placeholder:"Nombre del medio"});
+  const cat = h("select", {}, ...Object.entries(CATS).map(([k,t]) => h("option", {value:k, selected:k === "nacional"}, t)));
+  const info = h("p", {class:"ayuda"});
+  const probar = h("button", {type:"button", onclick: async () => {
+    info.textContent = "Probando…";
+    try{
+      const r = await api("fuentes/probar", {metodo:"POST", cuerpo:{url:url.value}});
+      if(!nombre.value) nombre.value = r.nombre || "";
+      info.textContent = "Funciona: trae " + r.cantidad + " notas. Ejemplo: “" + (r.muestra[0] || "") + "”";
+    }catch(e){ info.textContent = ""; aviso(e.message, true); }
+  }}, "Probar");
+  v.append(
+    h("div", {class:"barra"}, h("h2", {}, "Medios que podés republicar")),
+    h("div", {class:"card"},
+      h("div", {class:"fila"},
+        h("div", {class:"campo", style:"flex:2"}, h("label", {for:"furl"}, "Dirección del feed RSS"), url),
+        h("div", {class:"campo"}, h("label", {}, "Nombre"), nombre),
+        h("div", {class:"campo"}, h("label", {}, "Sección por defecto"), cat)),
+      info,
+      h("p", {class:"ayuda"}, "El feed suele terminar en /feed o /rss, o aparece con el ícono de RSS en el sitio del medio."),
+      h("div", {class:"acc", style:"margin-top:10px"}, probar,
+        h("button", {class:"fuerte", onclick: async () => {
+          try{
+            const r = await api("fuentes", {metodo:"POST", cuerpo:{nombre:nombre.value, feed_url:url.value, cat_default:cat.value}});
+            aviso(r.resultado.error ? "Se guardó, pero no se pudo leer: " + r.resultado.error : "Fuente agregada: " + r.resultado.nuevas + " notas para revisar.", !!r.resultado.error);
+            mostrar("fuentes");
+          }catch(e){ aviso(e.message, true); }
+        }}, "Agregar fuente"))),
+    caja);
+  const {fuentes} = await api("fuentes");
+  if(!fuentes.length) caja.append(h("div", {class:"vacio"}, h("b", {}, "Sin fuentes todavía"), "Agregá el feed de un diario o portal para recibir sus notas en la cola."));
+  fuentes.forEach(f => caja.append(h("div", {class:"card"},
+    h("div", {class:"meta"}, h("span", {class:"chip " + (f.activa ? "ok" : "")}, f.activa ? "Activa" : "Pausada"), h("span", {class:"chip"}, CATS[f.cat_default] || f.cat_default),
+      f.pendientes ? h("span", {class:"chip reg"}, f.pendientes + " pendientes") : null,
+      f.ultimo_chequeo ? h("span", {}, "Última revisión: " + fechaCorta(f.ultimo_chequeo)) : null),
+    h("h3", {}, f.nombre),
+    h("p", {class:"ayuda", style:"word-break:break-all"}, f.feed_url),
+    f.ultimo_error ? h("div", {class:"aviso mal", style:"margin:8px 0"}, "No se pudo leer: " + f.ultimo_error) : null,
+    h("div", {class:"acc", style:"margin-top:8px"},
+      h("button", {class:"chico", onclick: async () => { await api("fuentes/" + f.id, {metodo:"PUT", cuerpo:{activa: !f.activa}}); mostrar("fuentes"); }}, f.activa ? "Pausar" : "Reactivar"),
+      h("button", {class:"chico", onclick: async () => { const r = await api("fuentes/" + f.id + "/actualizar", {metodo:"POST"}); aviso(r.resultado[0].error || (r.resultado[0].nuevas + " notas nuevas."), !!r.resultado[0].error); mostrar("fuentes"); }}, "Revisar ahora"),
+      h("button", {class:"peligro chico", onclick: async () => { if(confirm("¿Quitar “" + f.nombre + "” y sus notas pendientes?")){ await api("fuentes/" + f.id, {metodo:"DELETE"}); mostrar("fuentes"); } }}, "Quitar")))));
+}
+
+/* ===== PODCASTS ===== */
+async function vistaPodcasts(v){
+  const caja = h("div", {});
+  let duracion = 0, archivoMp3 = null;
+  const titulo = h("input", {maxlength:200});
+  const desc = h("textarea", {maxlength:800, style:"min-height:80px"});
+  const cat = h("select", {}, ...Object.entries(CATS_POD).map(([k,t]) => h("option", {value:k}, t)));
+  const fecha = h("input", {type:"datetime-local", value:aLocalInput()});
+  const estado = h("select", {}, h("option", {value:"publicado"}, "Publicado"), h("option", {value:"borrador"}, "Borrador"));
+  const dur = h("div", {class:"ayuda"});
+  const btn = h("button", {class:"fuerte", onclick: async () => {
+    if(!archivoMp3) return aviso("Elegí el MP3 primero.", true);
+    if(!titulo.value.trim()) return aviso("Falta el título.", true);
+    if(duracion > MAX_SEG_POD) return aviso("El episodio supera los 5 minutos.", true);
+    btn.disabled = true; btn.textContent = "Subiendo…";
+    const fd = new FormData();
+    fd.append("titulo", titulo.value); fd.append("descripcion", desc.value); fd.append("cat", cat.value);
+    fd.append("publicado_en", aISO(fecha.value)); fd.append("estado", estado.value);
+    fd.append("duracion", String(duracion)); fd.append("audio", archivoMp3);
+    try{ await api("podcasts", {metodo:"POST", form:fd}); aviso("Episodio publicado."); mostrar("podcasts"); }
+    catch(e){ aviso(e.message, true); btn.disabled = false; btn.textContent = "Publicar episodio"; }
+  }}, "Publicar episodio");
+  const file = h("input", {type:"file", accept:"audio/mpeg,.mp3", id:"fmp3", onchange: e => {
+    archivoMp3 = e.target.files[0]; duracion = 0; if(!archivoMp3) return;
+    const a = new Audio(URL.createObjectURL(archivoMp3));
+    a.addEventListener("loadedmetadata", () => {
+      duracion = Math.round(a.duration);
+      const mb = (archivoMp3.size / 1048576).toFixed(1);
+      dur.textContent = "Duración: " + Math.floor(duracion/60) + ":" + String(duracion % 60).padStart(2,"0") + " · " + mb + " MB" + (duracion > MAX_SEG_POD ? " — supera el máximo de 5 minutos" : "");
+      dur.style.color = duracion > MAX_SEG_POD ? "var(--alerta)" : "var(--senal)";
+      if(!titulo.value) titulo.value = archivoMp3.name.replace(/\.mp3$/i, "").replace(/[-_]+/g, " ");
+    });
+    a.addEventListener("error", () => { dur.textContent = "No pude leer ese audio. ¿Es un MP3?"; dur.style.color = "var(--alerta)"; });
+  }});
+  v.append(
+    h("div", {class:"barra"}, h("h2", {}, "Subir un podcast")),
+    h("div", {class:"card"},
+      h("div", {class:"subir"}, h("label", {for:"fmp3"}, "Elegir MP3"), file, h("p", {}, "Hasta 5 minutos. Para voz sola, 96 kbps mono alcanza y sobra."), dur),
+      h("div", {class:"fila"},
+        h("div", {class:"campo", style:"flex:3"}, h("label", {}, "Título"), titulo),
+        h("div", {class:"campo"}, h("label", {}, "Categoría"), cat)),
+      h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Descripción"), desc)),
+      h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Fecha y hora"), fecha), h("div", {class:"campo"}, h("label", {}, "Estado"), estado)),
+      btn),
+    h("div", {class:"barra"}, h("h2", {}, "Episodios")), caja);
+  const {podcasts} = await api("podcasts");
+  if(!podcasts.length) caja.append(h("div", {class:"vacio"}, h("b", {}, "Todavía no hay episodios"), "Subí el primero arriba."));
+  podcasts.forEach(p => {
+    const card = h("div", {class:"card"});
+    const ver = () => card.replaceChildren(
+      h("div", {class:"meta"}, h("span", {class:"chip"}, CATS_POD[p.cat] || p.cat), h("span", {class:"chip " + (p.estado === "publicado" ? "ok" : "mal")}, p.estado),
+        h("span", {}, fechaCorta(p.publicado_en)), h("span", {}, Math.floor(p.duracion/60) + ":" + String(p.duracion % 60).padStart(2,"0"))),
+      h("h3", {}, p.titulo), p.descripcion ? h("p", {class:"resumen"}, p.descripcion) : null,
+      h("audio", {controls:true, preload:"none", src:"/media/" + p.audio_key}),
+      h("div", {class:"acc", style:"margin-top:10px"},
+        h("button", {class:"chico", onclick: editar}, "Editar"),
+        h("button", {class:"peligro chico", onclick: async () => { if(confirm("¿Borrar este episodio y su audio?")){ await api("podcasts/" + p.id, {metodo:"DELETE"}); mostrar("podcasts"); } }}, "Borrar")));
+    const editar = () => {
+      const t = h("input", {value:p.titulo}), d = h("textarea", {style:"min-height:70px"}), c = h("select", {}, ...Object.entries(CATS_POD).map(([k,x]) => h("option", {value:k, selected:k === p.cat}, x)));
+      d.value = p.descripcion || "";
+      const e = h("select", {}, h("option", {value:"publicado", selected:p.estado === "publicado"}, "Publicado"), h("option", {value:"borrador", selected:p.estado === "borrador"}, "Borrador"));
+      const f = h("input", {type:"datetime-local", value:aLocalInput(p.publicado_en)});
+      card.replaceChildren(h("div", {class:"fila"}, h("div", {class:"campo", style:"flex:3"}, h("label", {}, "Título"), t), h("div", {class:"campo"}, h("label", {}, "Categoría"), c)),
+        h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Descripción"), d)),
+        h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Fecha"), f), h("div", {class:"campo"}, h("label", {}, "Estado"), e)),
+        h("div", {class:"acc"}, h("button", {class:"fuerte chico", onclick: async () => {
+          try{ await api("podcasts/" + p.id, {metodo:"PUT", cuerpo:{titulo:t.value, descripcion:d.value, cat:c.value, estado:e.value, publicado_en:aISO(f.value)}}); mostrar("podcasts"); }catch(x){ aviso(x.message, true); }
+        }}, "Guardar"), h("button", {class:"chico", onclick: ver}, "Cancelar")));
+    };
+    ver(); caja.append(card);
+  });
+}
+
+/* ===== HISTORIA DE LA RADIO ===== */
+async function vistaHistoria(v){
+  const caja = h("div", {});
+  v.append(h("div", {class:"barra"}, h("h2", {}, "Historia de la radio"),
+    h("a", {class:"btn", href:"../historia.html", target:"_blank", rel:"noopener"}, "Ver en el sitio ↗"),
+    h("button", {class:"fuerte", onclick: () => editor()}, "+ Nueva entrada")), caja);
+
+  const lista = async () => {
+    const {historia} = await api("historia");
+    caja.replaceChildren();
+    if(!historia.length) caja.append(h("div", {class:"vacio"}, h("b", {}, "Todavía no hay historia cargada"), "Armá la primera entrada: por ejemplo “1989: la primera FM de Cipolletti sale al aire”."));
+    historia.forEach(e => {
+      const portada = e.fotos[e.portada] || e.fotos[0];
+      caja.append(h("div", {class:"card"}, h("div", {class:"lista-fila"},
+        portada ? h("img", {class:"mini", src:"/media/" + portada.key, alt:""}) : null,
+        h("div", {},
+          h("div", {class:"meta"}, e.etiqueta ? h("span", {class:"chip reg"}, e.etiqueta) : null, h("span", {class:"chip " + (e.estado === "publicada" ? "ok" : "mal")}, e.estado), h("span", {}, e.fotos.length + " fotos")),
+          h("h3", {}, e.titulo),
+          h("div", {class:"acc", style:"margin-top:8px"},
+            h("button", {class:"chico", onclick: () => editor(e)}, "Editar"),
+            h("a", {class:"btn chico", href:"../historia.html?s=" + encodeURIComponent(e.slug), target:"_blank", rel:"noopener"}, "Ver ↗"),
+            h("button", {class:"peligro chico", onclick: async () => { if(confirm("¿Borrar esta entrada?")){ await api("historia/" + e.id, {metodo:"DELETE"}); lista(); } }}, "Borrar"))))));
+    });
+  };
+
+  const editor = (e = null) => {
+    const fotos = e ? e.fotos.map(x => ({...x})) : [];
+    let portada = e ? e.portada : 0;
+    const titulo = h("input", {value:e?.titulo || "", maxlength:200});
+    const etiqueta = h("input", {value:e?.etiqueta || "", maxlength:40, placeholder:"1989, Los años 90…"});
+    const orden = h("input", {type:"number", value:e?.orden ?? 0});
+    const bajada = h("input", {value:e?.bajada || "", maxlength:400, placeholder:"Una línea que resume la entrada"});
+    const cuerpo = h("textarea", {style:"min-height:260px", maxlength:20000}); cuerpo.value = e?.cuerpo || "";
+    const estado = h("select", {}, h("option", {value:"publicada", selected:e?.estado !== "borrador"}, "Publicada"), h("option", {value:"borrador", selected:e?.estado === "borrador"}, "Borrador"));
+    const grilla = h("div", {class:"fotos"});
+    const err = h("div", {class:"aviso mal", hidden:true});
+
+    const pintar = () => {
+      grilla.replaceChildren(...fotos.map((f, i) => h("div", {class:"foto", "data-portada": i === portada ? "1" : "0"},
+        h("img", {src:"/media/" + f.key, alt:""}),
+        h("input", {value:f.epigrafe, placeholder:"Epígrafe (quién, cuándo, dónde)", maxlength:240, oninput: ev => f.epigrafe = ev.target.value}),
+        h("div", {class:"acc"},
+          h("button", {type:"button", class:"chico", title:"Subir", disabled:i === 0, onclick:() => { [fotos[i-1], fotos[i]] = [fotos[i], fotos[i-1]]; if(portada === i) portada--; else if(portada === i-1) portada++; pintar(); }}, "↑"),
+          h("button", {type:"button", class:"chico", title:"Bajar", disabled:i === fotos.length - 1, onclick:() => { [fotos[i+1], fotos[i]] = [fotos[i], fotos[i+1]]; if(portada === i) portada++; else if(portada === i+1) portada--; pintar(); }}, "↓"),
+          h("button", {type:"button", class:"chico", onclick:() => { portada = i; pintar(); }}, i === portada ? "★ Portada" : "Portada"),
+          h("button", {type:"button", class:"chico", title:"Pone la foto dentro del texto, donde está el cursor", onclick:() => {
+            const p = cuerpo.selectionStart ?? cuerpo.value.length, t = "\n\n[foto:" + (i + 1) + "]\n\n";
+            cuerpo.value = cuerpo.value.slice(0, p) + t + cuerpo.value.slice(p); cuerpo.focus();
+          }}, "En el texto"),
+          h("button", {type:"button", class:"peligro chico", onclick:() => { fotos.splice(i, 1); if(portada >= fotos.length) portada = 0; pintar(); }}, "✕")))));
+    };
+    pintar();
+
+    const subir = h("input", {type:"file", accept:"image/*", multiple:true, id:"fhist", onchange: async ev => {
+      const files = [...ev.target.files]; ev.target.value = "";
+      for(const f of files){
+        try{ const r = await subirFoto(f); fotos.push({key:r.key, epigrafe:""}); pintar(); }
+        catch(x){ aviso(f.name + ": " + x.message, true); }
+      }
+    }});
+    const btn = h("button", {class:"fuerte", type:"submit"}, e ? "Guardar cambios" : "Publicar entrada");
+    caja.replaceChildren(h("div", {class:"editor"}, h("h2", {}, e ? "Editar entrada" : "Nueva entrada"),
+      h("form", {onsubmit: async ev => {
+        ev.preventDefault(); err.hidden = true; btn.disabled = true;
+        const d = {titulo:titulo.value, etiqueta:etiqueta.value, bajada:bajada.value, cuerpo:cuerpo.value, fotos, portada, orden:orden.value, estado:estado.value};
+        try{ await api(e ? "historia/" + e.id : "historia", {metodo:e ? "PUT" : "POST", cuerpo:d}); aviso("Entrada guardada."); lista(); }
+        catch(x){ err.textContent = x.message; err.hidden = false; btn.disabled = false; }
+      }},
+        h("div", {class:"fila"}, h("div", {class:"campo", style:"flex:3"}, h("label", {}, "Título"), titulo), h("div", {class:"campo"}, h("label", {}, "Época o año"), etiqueta)),
+        h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Bajada"), bajada)),
+        h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Texto"), cuerpo,
+          h("p", {class:"ayuda"}, "Una línea en blanco separa los párrafos. Una línea que empieza con “## ” es un subtítulo. “[foto:2]” en su propia línea pone la foto 2 en ese lugar."))),
+        h("label", {}, "Fotos"),
+        h("div", {class:"subir"}, h("label", {for:"fhist"}, "Agregar fotos"), subir, h("p", {}, "Se achican solas antes de subir. Podés elegir varias a la vez.")),
+        grilla,
+        h("div", {class:"fila"}, h("div", {class:"campo"}, h("label", {}, "Posición en la línea de tiempo (menor = primero)"), orden), h("div", {class:"campo"}, h("label", {}, "Estado"), estado)),
+        err, h("div", {class:"acc"}, btn, h("button", {type:"button", onclick:lista}, "Cancelar")))));
+  };
+  await lista();
+}
+
+/* ===== arranque ===== */
+(async () => {
+  if(clave){ try{ await api("resumen"); return iniciar(); }catch{} }
+  login("");
+})();
+</script>
+</body>
+</html>

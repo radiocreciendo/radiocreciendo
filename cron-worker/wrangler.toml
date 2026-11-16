@@ -1,0 +1,10 @@
+name = "radiocreciendo-fuentes"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[triggers]
+crons = ["*/30 * * * *"]
+
+[vars]
+SITIO = "https://radiocreciendo.com"
+# El secreto PANEL_CLAVE se carga con:  npx wrangler secret put PANEL_CLAVE

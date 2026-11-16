@@ -195,6 +195,10 @@ body{
   font-size:.82rem;font-weight:700;color:var(--magenta);
 }
 .nota[aria-expanded="true"] .nota__mas{visibility:hidden;height:0;margin:0}
+.nota__fuente{display:none;margin-top:10px;font-size:.82rem;color:var(--gris)}
+.nota[aria-expanded="true"] .nota__fuente{display:block}
+.nota__fuente a{color:var(--magenta);font-weight:700;text-decoration:none;margin-right:12px}
+a.modo{text-decoration:none}
 
 .vacio{padding:56px 0 70px;text-align:center;color:var(--gris);font-size:.95rem}
 .vacio b{display:block;color:var(--tinta);font-size:1.05rem;margin-bottom:6px}
@@ -484,6 +488,7 @@ body{
       Podcasts
     </button>
     <button class="modo" id="modoFarm" aria-selected="false">Farmacias</button>
+    <a class="modo" href="historia.html" aria-selected="false">Historia</a>
   </div>
 </nav>
 
@@ -1105,10 +1110,30 @@ function render(){
         '<div class="nota__meta">' + (esRegional(n) ? '<span class="nota__punto" title="De nuestra zona"></span>' : "") + c.nombre + '</div>' +
         '<h2 class="nota__titulo"></h2>' +
         '<p class="nota__cuerpo"></p>' +
+        '<div class="nota__fuente"></div>' +
       '</div>' +
       '<div class="nota__mas">Seguir leyendo</div>';
     art.querySelector(".nota__titulo").textContent = n.titulo;
     art.querySelector(".nota__cuerpo").textContent = n.cuerpo;
+
+    // Notas que vienen del panel: link a la nota completa y crédito al medio de origen.
+    const pie = art.querySelector(".nota__fuente");
+    if(n.slug){
+      const ver = document.createElement("a");
+      ver.href = "nota.html?s=" + encodeURIComponent(n.slug);
+      ver.textContent = "Ver nota completa";
+      pie.append(ver);
+    }
+    if(n.fuente && n.fuente.nombre){
+      if(n.fuente.url){
+        const o = document.createElement("a");
+        o.href = n.fuente.url; o.target = "_blank"; o.rel = "noopener noreferrer";
+        o.textContent = "Fuente: " + n.fuente.nombre + " ↗";
+        pie.append(o);
+      } else pie.append("Fuente: " + n.fuente.nombre);
+    }
+    pie.addEventListener("click", ev => ev.stopPropagation());
+    pie.addEventListener("keydown", ev => ev.stopPropagation());
 
     const abrir = () => art.setAttribute("aria-expanded", art.getAttribute("aria-expanded") === "true" ? "false" : "true");
     art.addEventListener("click", abrir);
@@ -1138,16 +1163,19 @@ function ordenar(arr){
 }
 
 async function cargarFeed(){
-  try{
-    const r = await fetch("noticias.json?v=" + Date.now(), {cache:"no-store"});
-    if(!r.ok) throw new Error(r.status);
-    const data = await r.json();
-    if(Array.isArray(data.notas) && data.notas.length){
-      notas = ordenar(data.notas);
-      render();
-      return;
-    }
-  }catch(e){ /* sin conexión o servidor sin el archivo: se usa la copia local */ }
+  // 1) el panel (base de datos); 2) noticias.json; 3) la copia incrustada
+  for(const url of ["/api/noticias", "noticias.json?v=" + Date.now()]){
+    try{
+      const r = await fetch(url, {cache:"no-store"});
+      if(!r.ok) throw new Error(r.status);
+      const data = await r.json();
+      if(Array.isArray(data.notas) && data.notas.length){
+        notas = ordenar(data.notas);
+        render();
+        return;
+      }
+    }catch(e){ /* sin conexión o sin ese origen: se prueba el siguiente */ }
+  }
 
   try{
     const local = JSON.parse(document.getElementById("feedLocal").textContent);
@@ -1295,16 +1323,18 @@ btnNotas.addEventListener("click", () => verModo("notas"));
 btnPod.addEventListener("click",   () => verModo("podcasts"));
 
 async function cargarPodcasts(){
-  try{
-    const r = await fetch("podcasts.json?v=" + Date.now(), {cache:"no-store"});
-    if(!r.ok) throw new Error(r.status);
-    const d = await r.json();
-    if(Array.isArray(d.episodios) && d.episodios.length){
-      episodios = d.episodios.slice().sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-      renderEpisodios();
-      return;
-    }
-  }catch(e){}
+  for(const url of ["/api/podcasts", "podcasts.json?v=" + Date.now()]){
+    try{
+      const r = await fetch(url, {cache:"no-store"});
+      if(!r.ok) throw new Error(r.status);
+      const d = await r.json();
+      if(Array.isArray(d.episodios) && d.episodios.length){
+        episodios = d.episodios.slice().sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+        renderEpisodios();
+        return;
+      }
+    }catch(e){}
+  }
   try{
     const local = JSON.parse(document.getElementById("podLocal").textContent);
     episodios = (local.episodios || []).slice().sort((a,b) => new Date(b.fecha) - new Date(a.fecha));

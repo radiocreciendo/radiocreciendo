@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nuestra historia · Radio Creciendo 102.1</title>
+<meta name="description" content="La historia de FM Creciendo 102.1: la primera FM de Cipolletti, desde 1989.">
+<meta name="theme-color" content="#340634">
+<link rel="icon" href="img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--noche:#100C1B;--ciruela:#340634;--magenta:#851B80;--senal:#048F3F;--papel:#FAF6F9;--tinta:#241B27;--gris:#6B5E6D;--linea:#E9DFE7;--tarjeta:#fff}
+@media (prefers-color-scheme: dark){:root{--papel:#16101C;--tinta:#F3ECF2;--gris:#A08FA6;--linea:#2D2336;--tarjeta:#1C1524}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:'Archivo',system-ui,sans-serif;font-size:17px;line-height:1.65}
+a{color:var(--magenta)}
+:focus-visible{outline:3px solid var(--senal);outline-offset:2px}
+header.top{background:linear-gradient(120deg,var(--noche),var(--ciruela) 60%,var(--magenta));color:#fff;padding:16px 20px}
+header.top .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header.top img{width:40px;height:40px;border-radius:10px}
+header.top a{color:#fff;text-decoration:none;font-weight:800;letter-spacing:-.01em}
+header.top small{display:block;font-weight:500;opacity:.75;font-size:.78rem}
+header.top .sp{flex:1}
+header.top .vivo{background:var(--senal);padding:7px 14px;border-radius:999px;font-size:.85rem}
+main{max-width:760px;margin:0 auto;padding:28px 20px 70px}
+.vacio{text-align:center;color:var(--gris);padding:50px 10px}
+footer{border-top:1px solid var(--linea);text-align:center;color:var(--gris);font-size:.85rem;padding:22px 16px}
+footer b{color:var(--tinta)}
+
+h1{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.15;letter-spacing:-.02em;margin:0 0 10px;font-weight:900}
+.intro{color:var(--gris);margin:0 0 28px}
+.linea{position:relative;border-left:3px solid var(--linea);margin-left:8px;padding-left:22px}
+.hito{position:relative;display:block;text-decoration:none;color:inherit;background:var(--tarjeta);border:1px solid var(--linea);border-radius:14px;overflow:hidden;margin-bottom:20px}
+.hito::before{content:"";position:absolute;left:-31px;top:24px;width:15px;height:15px;border-radius:50%;background:var(--magenta);border:3px solid var(--papel)}
+.hito:hover{border-color:var(--magenta)}
+.hito img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.hito .t{padding:16px 18px 18px}
+.eti{display:inline-block;background:var(--senal);color:#fff;font-weight:800;font-size:.8rem;padding:2px 11px;border-radius:999px;margin-bottom:6px}
+.hito h2{margin:0 0 4px;font-size:1.25rem;line-height:1.25}
+.hito p{margin:0;color:var(--gris);font-size:.95rem}
+.volver{display:inline-block;margin-bottom:18px;font-weight:700;text-decoration:none}
+article p{margin:0 0 1.1em}
+article h2{font-size:1.4rem;margin:1.6em 0 .5em;line-height:1.25}
+figure{margin:1.6em -20px}
+figure img{width:100%;display:block}
+figcaption{font-size:.84rem;color:var(--gris);padding:8px 20px 0}
+.hero{margin:0 -20px 24px}
+.hero img{width:100%;display:block;max-height:480px;object-fit:cover}
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:28px}
+.galeria figure{margin:0}
+.galeria img{border-radius:10px;aspect-ratio:4/3;object-fit:cover}
+.galeria figcaption{padding:6px 2px 0}
+@media (min-width:800px){figure,.hero{margin-left:0;margin-right:0}.hero img,figure img{border-radius:12px}figcaption{padding-left:0}}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <img src="img/icon-192.png" alt="">
+  <a href="./">Radio Creciendo 102.1<small>Tu frecuencia positiva</small></a>
+  <span class="sp"></span>
+  <a class="vivo" href="./">Escuchar en vivo</a>
+</div></header>
+<main id="m"><div class="vacio">Cargando…</div></main>
+<footer><b>FM Creciendo 102.1 MHz</b> · Primer FM de la ciudad de Cipolletti, desde 1989 · <a href="mailto:radiocreciendo@gmail.com">radiocreciendo@gmail.com</a></footer>
+<script>
+
+const $m = document.getElementById("m");
+const e = (t, c, x) => { const n = document.createElement(t); if(c) n.className = c; if(x != null) n.textContent = x; return n; };
+const slug = new URLSearchParams(location.search).get("s");
+
+function foto(f){
+  const fig = e("figure"); const i = e("img"); i.src = f.url; i.alt = f.epigrafe || ""; i.loading = "lazy"; fig.append(i);
+  if(f.epigrafe) fig.append(e("figcaption", "", f.epigrafe));
+  return fig;
+}
+
+async function lista(){
+  document.title = "Nuestra historia · Radio Creciendo 102.1";
+  const r = await fetch("/api/historia"); const d = await r.json();
+  $m.replaceChildren(e("h1", "", "Nuestra historia"),
+    e("p", "intro", "La primera FM de Cipolletti, desde 1989: cómo empezamos, quiénes pasaron por el micrófono y cómo crecimos junto al Alto Valle."));
+  if(!d.entradas || !d.entradas.length){ $m.append(e("div", "vacio", "Estamos preparando la historia de la radio. Volvé pronto.")); return; }
+  const l = e("div", "linea");
+  d.entradas.forEach(x => {
+    const a = e("a", "hito"); a.href = "historia.html?s=" + encodeURIComponent(x.slug);
+    if(x.portada){ const i = e("img"); i.src = x.portada.url; i.alt = ""; i.loading = "lazy"; a.append(i); }
+    const t = e("div", "t");
+    if(x.etiqueta) t.append(e("span", "eti", x.etiqueta));
+    t.append(e("h2", "", x.titulo)); if(x.bajada) t.append(e("p", "", x.bajada));
+    a.append(t); l.append(a);
+  });
+  $m.append(l);
+}
+
+async function entrada(){
+  const r = await fetch("/api/historia?s=" + encodeURIComponent(slug));
+  if(!r.ok){ $m.replaceChildren(e("div", "vacio", "No encontramos esa página.")); return; }
+  const x = await r.json();
+  document.title = x.titulo + " · Radio Creciendo 102.1";
+  const a = e("a", "volver", "← Toda la historia"); a.href = "historia.html";
+  const art = e("article");
+  if(x.etiqueta) art.append(e("span", "eti", x.etiqueta));
+  art.append(e("h1", "", x.titulo));
+  if(x.bajada) art.append(e("p", "intro", x.bajada));
+  const usadas = new Set();
+  if(x.portada){ const h = e("div", "hero"); const i = e("img"); i.src = x.portada.url; i.alt = x.portada.epigrafe || ""; h.append(i);
+    if(x.portada.epigrafe) h.append(e("figcaption", "", x.portada.epigrafe)); art.append(h); usadas.add(x.portada.url); }
+  // Párrafos separados por línea en blanco; "## " es subtítulo; "[foto:N]" coloca la foto N.
+  x.cuerpo.split(/\n{2,}/).forEach(b => {
+    b = b.trim(); if(!b) return;
+    const m = b.match(/^\[foto:(\d+)\]$/i);
+    if(m){ const f = x.fotos[parseInt(m[1], 10) - 1]; if(f){ art.append(foto(f)); usadas.add(f.url); } return; }
+    if(b.startsWith("## ")) art.append(e("h2", "", b.slice(3)));
+    else art.append(e("p", "", b));
+  });
+  const resto = x.fotos.filter(f => !usadas.has(f.url));
+  if(resto.length){ const g = e("div", "galeria"); resto.forEach(f => g.append(foto(f))); art.append(g); }
+  $m.replaceChildren(a, art);
+}
+
+(slug ? entrada() : lista()).catch(() => $m.replaceChildren(e("div", "vacio", "No pudimos cargar esta página. Probá de nuevo en un momento.")));
+
+</script>
+</body>
+</html>

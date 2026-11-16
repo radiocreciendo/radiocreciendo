@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nota · Radio Creciendo 102.1</title>
+<meta name="description" content="Noticias de Radio Creciendo 102.1, Cipolletti.">
+<meta name="theme-color" content="#340634">
+<link rel="icon" href="img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--noche:#100C1B;--ciruela:#340634;--magenta:#851B80;--senal:#048F3F;--papel:#FAF6F9;--tinta:#241B27;--gris:#6B5E6D;--linea:#E9DFE7;--tarjeta:#fff}
+@media (prefers-color-scheme: dark){:root{--papel:#16101C;--tinta:#F3ECF2;--gris:#A08FA6;--linea:#2D2336;--tarjeta:#1C1524}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:'Archivo',system-ui,sans-serif;font-size:17px;line-height:1.65}
+a{color:var(--magenta)}
+:focus-visible{outline:3px solid var(--senal);outline-offset:2px}
+header.top{background:linear-gradient(120deg,var(--noche),var(--ciruela) 60%,var(--magenta));color:#fff;padding:16px 20px}
+header.top .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header.top img{width:40px;height:40px;border-radius:10px}
+header.top a{color:#fff;text-decoration:none;font-weight:800;letter-spacing:-.01em}
+header.top small{display:block;font-weight:500;opacity:.75;font-size:.78rem}
+header.top .sp{flex:1}
+header.top .vivo{background:var(--senal);padding:7px 14px;border-radius:999px;font-size:.85rem}
+main{max-width:760px;margin:0 auto;padding:28px 20px 70px}
+.vacio{text-align:center;color:var(--gris);padding:50px 10px}
+footer{border-top:1px solid var(--linea);text-align:center;color:var(--gris);font-size:.85rem;padding:22px 16px}
+footer b{color:var(--tinta)}
+
+.cat{display:inline-block;background:var(--linea);color:var(--tinta);font-weight:700;font-size:.78rem;padding:2px 11px;border-radius:999px}
+h1{font-size:clamp(1.6rem,5vw,2.2rem);line-height:1.18;letter-spacing:-.02em;margin:10px 0 8px;font-weight:900}
+.fecha{color:var(--gris);font-size:.88rem;margin-bottom:20px}
+.foto img{width:100%;border-radius:12px;display:block;margin-bottom:22px}
+p{margin:0 0 1.1em}
+.fuente{border-top:1px solid var(--linea);margin-top:26px;padding-top:16px;font-size:.92rem;color:var(--gris)}
+.volver{display:inline-block;margin-bottom:18px;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <img src="img/icon-192.png" alt="">
+  <a href="./">Radio Creciendo 102.1<small>Tu frecuencia positiva</small></a>
+  <span class="sp"></span>
+  <a class="vivo" href="./">Escuchar en vivo</a>
+</div></header>
+<main id="m"><div class="vacio">Cargando…</div></main>
+<footer><b>FM Creciendo 102.1 MHz</b> · Primer FM de la ciudad de Cipolletti, desde 1989 · <a href="mailto:radiocreciendo@gmail.com">radiocreciendo@gmail.com</a></footer>
+<script>
+
+const $m = document.getElementById("m");
+const e = (t, c, x) => { const n = document.createElement(t); if(c) n.className = c; if(x != null) n.textContent = x; return n; };
+const CATS = {altovalle:"Alto Valle",neuquen:"Neuquén",bariloche:"Bariloche",energia:"Energía",nacional:"Nacional",internacional:"Internacional",deportes:"Deportes",economia:"Economía",comunidad:"Comunidad",eventos:"Eventos"};
+const slug = new URLSearchParams(location.search).get("s");
+(async () => {
+  const r = await fetch("/api/nota?s=" + encodeURIComponent(slug || ""));
+  if(!r.ok){ $m.replaceChildren(e("div", "vacio", "No encontramos esa nota.")); return; }
+  const n = await r.json();
+  document.title = n.titulo + " · Radio Creciendo 102.1";
+  const a = e("a", "volver", "← Más notas"); a.href = "./";
+  const art = e("article");
+  art.append(e("span", "cat", CATS[n.cat] || "Actualidad"), e("h1", "", n.titulo),
+    e("div", "fecha", new Date(n.hora).toLocaleString("es-AR", {dateStyle:"full", timeStyle:"short", timeZone:"America/Argentina/Buenos_Aires"})));
+  if(n.imagen){ const f = e("div", "foto"); const i = e("img"); i.src = n.imagen; i.alt = ""; f.append(i); art.append(f); }
+  n.cuerpo.split(/\n+/).forEach(p => { if(p.trim()) art.append(e("p", "", p.trim())); });
+  if(n.fuente){
+    const f = e("div", "fuente"); f.append("Nota publicada originalmente por " + n.fuente.nombre + ". ");
+    if(n.fuente.url){ const l = e("a", "", "Leer la nota completa ↗"); l.href = n.fuente.url; l.target = "_blank"; l.rel = "noopener noreferrer"; f.append(l); }
+    art.append(f);
+  }
+  $m.replaceChildren(a, art);
+})().catch(() => $m.replaceChildren(e("div", "vacio", "No pudimos cargar la nota. Probá de nuevo en un momento.")));
+
+</script>
+</body>
+</html>

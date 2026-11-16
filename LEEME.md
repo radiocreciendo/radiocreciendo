@@ -1,5 +1,8 @@
 # Radio Creciendo 102.1 — sitio web y app
 
+> **Nuevo:** el dashboard de administración (notas, fuentes de otros medios, podcasts e
+> historia de la radio) está explicado en **LEEME-DASHBOARD.md**. Se usa en `/admin`.
+
 Todo el sitio son archivos estáticos. No hace falta base de datos, ni PHP, ni
 servidor especial: se sube por FTP y anda.
 

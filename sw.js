@@ -2,7 +2,7 @@
    Cachea la cáscara del sitio para que abra al instante y funcione sin señal.
    El stream de audio y el feed de noticias NUNCA se cachean: siempre van a la red. */
 
-const VERSION = "creciendo-v7";
+const VERSION = "creciendo-v8";
 const CASCARA = [
   "./",
   "./index.html",
@@ -32,6 +32,21 @@ self.addEventListener("fetch", e => {
 
   // Audio en vivo y todo lo que salga de otro dominio: derecho a la red.
   if (url.origin !== location.origin) return;
+
+  // El panel de administración y las fotos/audios subidos desde él no pasan por el caché.
+  if (url.pathname.startsWith("/admin/")) return;
+  if (url.pathname.startsWith("/media/podcasts/")) return;
+
+  // La API del panel: siempre red primero, con la última copia como paracaídas sin señal.
+  if (url.pathname.startsWith("/api/") && !url.pathname.startsWith("/api/admin/")) {
+    e.respondWith(
+      fetch(req)
+        .then(r => { const copia = r.clone(); caches.open(VERSION).then(c => c.put(req, copia)); return r; })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+  if (url.pathname.startsWith("/api/admin/")) return;
 
   // Los MP3 de episodios no se cachean: ocuparían todo el espacio del celular.
   if (url.pathname.includes("/podcasts/")) return;
